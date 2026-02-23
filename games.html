@@ -8,7 +8,7 @@
     <style>
         :root { --primary-color: #003366; --secondary-color: #FFD700; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: #eef2f7; text-align: center; }
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #eef2f7; text-align: center; overflow-x: hidden; }
         
         header { background-color: var(--primary-color); color: white; padding: 1rem 0; }
         .nav-content { width: 90%; max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
@@ -16,30 +16,28 @@
         nav ul li a { color: white; text-decoration: none; }
 
         .game-area { padding: 50px 20px; }
-        .score { font-size: 3rem; font-weight: bold; color: var(--primary-color); margin-bottom: 20px; }
+        .score { font-size: 4rem; font-weight: bold; color: var(--primary-color); margin-bottom: 10px; text-shadow: 2px 2px 0px white; }
         
-        /* 遊戲圖片容器 */
         #pop-container {
-            width: 300px;
-            height: 450px;
+            width: 320px;
+            height: 480px;
             margin: 0 auto;
             cursor: pointer;
             user-select: none;
-            -webkit-tap-highlight-color: transparent; /* 防止手機點擊發藍光 */
+            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         #pop-img {
-            width: 100%;
-            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
             object-fit: contain;
-            transition: transform 0.05s;
+            -webkit-user-drag: none; 
         }
 
-        #pop-img:active {
-            transform: scale(0.95);
-        }
-
-        .instructions { margin-top: 30px; color: #666; }
+        .instructions { margin-top: 20px; color: #555; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -58,20 +56,20 @@
     </header>
 
     <div class="game-area">
-        <h2 style="color:var(--primary-color); margin-bottom: 10px;">畢業舞王 Pop-Dance</h2>
+        <h2 style="color:var(--primary-color); margin-bottom: 5px;">畢業舞王 Pop-Dance</h2>
         <div class="score" id="score">0</div>
         
         <div id="pop-container">
-            <!-- 預設圖片，你可以換成你朋友的照片 -->
-            <img id="pop-img" src="https://api.dicebear.com/7.x/fun-emoji/svg?seed=1" alt="Pop!">
+            <!-- 預設顯示 friend1.jpg -->
+            <img id="pop-img" src="friend1.jpg" alt="點擊開始跳舞！">
         </div>
 
         <div class="instructions">
-            <p>瘋狂點擊學長姐，一起跳起來！</p>
+            <p>點擊學長姐，一起跳起來！</p>
         </div>
     </div>
 
-    <!-- 音效 (選用，若有音效檔可放入) -->
+    <!-- 音效 -->
     <audio id="pop-sound" src="https://www.soundjay.com/buttons/sounds/button-37.mp3"></audio>
 
     <script>
@@ -80,34 +78,49 @@
         const popSound = document.getElementById('pop-sound');
         let count = 0;
 
-        // 圖片位址 (你可以換成你朋友的截圖)
-        const img_normal = "https://github.com/shutiao7321/BC-project/blob/main/firend1.jpg?raw=true"; // 合嘴圖
-        const img_active = "https://github.com/shutiao7321/BC-project/blob/main/firend2.jpg?raw=true"; // 張嘴圖
+        // 設定圖片檔名
+        const img_normal = "friend1.jpg"; 
+        const img_active = "friend2.jpg"; 
 
-        function pop() {
+        // --- 預載機制：防止點擊時才下載導致的閃爍 ---
+        const preloadImg = new Image();
+        preloadImg.src = img_active;
+
+        function playPop() {
             count++;
             scoreDisplay.innerText = count;
             
-            // 切換成開嘴圖
+            // 換成「跳舞中」的圖 (friend2.jpg)
             popImg.src = img_active;
             
             // 播放音效
             popSound.currentTime = 0;
-            popSound.play();
-
-            // 0.1 秒後換回合嘴圖
-            setTimeout(() => {
-                popImg.src = img_normal;
-            }, 100);
+            popSound.play().catch(() => {}); 
         }
 
-        // 監聽滑鼠與觸控事件
+        function endPop() {
+            // 換回「平常」的圖 (friend1.jpg)
+            popImg.src = img_normal;
+        }
+
         const container = document.getElementById('pop-container');
-        container.addEventListener('mousedown', pop);
-        container.addEventListener('touchstart', (e) => {
-            e.preventDefault(); // 防止手機連點縮放
-            pop();
+
+        // 滑鼠點擊邏輯
+        container.addEventListener('mousedown', (e) => {
+            if (e.button === 0) playPop();
         });
+        window.addEventListener('mouseup', endPop);
+
+        // 手機觸控邏輯 (RWD)
+        container.addEventListener('touchstart', (e) => {
+            e.preventDefault(); 
+            playPop();
+        });
+        container.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            endPop();
+        });
+
     </script>
 </body>
 </html>
