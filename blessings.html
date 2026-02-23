@@ -1,70 +1,74 @@
 <!DOCTYPE html>
-
 <html lang="zh-TW">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>祝福牆 | 2026級畢業紀念站</title>
-<link href="https://www.google.com/search?q=https://fonts.googleapis.com/css2%3Ffamily%3DNoto%2BSans%2BTC:wght%40400%3B700%26display%3Dswap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-<style>
-.blessing-card {
-background: #fffbe6;
-padding: 20px;
-margin-bottom: 20px;
-border-radius: 8px;
-border: 1px dashed #ffd700;
-}
-.blessing-form {
-background: white;
-padding: 30px;
-border-radius: 10px;
-margin-bottom: 40px;
-}
-input, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>祝福留言 | 2026級畢業紀念站</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary-color: #003366; --secondary-color: #FFD700; --white: #ffffff; --bg-color: #f4f7f9; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg-color); }
+        .container { width: 90%; max-width: 800px; margin: 0 auto; }
+        
+        header { background-color: var(--primary-color); color: var(--white); padding: 1.2rem 0; position: sticky; top: 0; z-index: 1000; }
+        .nav-content { display: flex; justify-content: space-between; align-items: center; width: 90%; max-width: 1200px; margin: 0 auto; }
+        nav ul { list-style: none; display: flex; gap: 20px; }
+        nav ul li a { color: var(--white); text-decoration: none; font-weight: 500; transition: 0.3s; padding: 5px 10px; border-radius: 4px; }
+        nav ul li a:hover, nav ul li a.active { color: var(--secondary-color); background: rgba(255,255,255,0.1); }
+
+        .section { padding: 60px 0; text-align: center; }
+        .section-title { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 40px; }
+        
+        .form-box { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 40px; text-align: left; }
+        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; }
+        .btn { border: none; cursor: pointer; display: block; width: 100%; text-align: center; padding: 12px; background-color: var(--secondary-color); color: var(--primary-color); font-weight: bold; border-radius: 8px; font-size: 1.1rem; }
+
+        .blessing-list { text-align: left; }
+        .blessing-card { background: #fffbe6; padding: 20px; border-radius: 10px; border-left: 5px solid var(--secondary-color); margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .blessing-card p { font-size: 1.1rem; margin-bottom: 10px; }
+        .blessing-card small { color: #888; }
+
+        footer { background-color: #222; color: #999; padding: 40px 0; text-align: center; border-top: 4px solid var(--secondary-color); }
+    </style>
 </head>
 <body>
-<header>
-<div class="container nav-container">
-<h2>🎓 畢業紀念站</h2>
-<nav>
-<ul>
-<li><a href="index.html">首頁</a></li>
-<li><a href="gallery.html">照片回顧</a></li>
-<li><a href="blessings.html" class="active">祝福牆</a></li>
-<li><a href="games.html">互動遊戲</a></li>
-</ul>
-</nav>
-</div>
-</header>
-
-<section class="container section">
-    <h2 class="section-title">給學長姐的悄悄話</h2>
-    
-    <div class="blessing-form">
-        <h3>寫下你的祝福</h3>
-        <input type="text" placeholder="你的姓名">
-        <textarea rows="4" placeholder="在這裡寫下給學長姐的祝福..."></textarea>
-        <button class="btn" style="border:none; cursor:pointer;" onclick="alert('感謝你的留言！(目前為模擬功能，未來可連接資料庫)')">送出祝福</button>
-    </div>
-
-    <div id="messages">
-        <div class="blessing-card">
-            <p>「祝福所有學長姐畢業快樂！在未來的職場上一路順風！」</p>
-            <small>— 學弟 王小明 敬上</small>
+    <header>
+        <div class="container nav-content">
+            <div class="logo">🎓 2026級畢業紀念站</div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">首頁</a></li>
+                    <li><a href="gallery.html">照片回顧</a></li>
+                    <li><a href="blessings.html" class="active">祝福留言</a></li>
+                    <li><a href="games.html">互動小遊戲</a></li>
+                </ul>
+            </nav>
         </div>
-        <div class="blessing-card">
-            <p>「謝謝學長在實作課的照顧，畢業快樂！」</p>
-            <small>— 學妹 李美華 敬上</small>
+    </header>
+
+    <section class="container section">
+        <h2 class="section-title">給學長姐的祝福</h2>
+        
+        <div class="form-box">
+            <h3 style="margin-bottom:15px; color:var(--primary-color)">寫下你的留言</h3>
+            <input type="text" placeholder="你的稱呼 (如：資工二 某某某)">
+            <textarea rows="4" placeholder="在這裡寫下你的祝福語..."></textarea>
+            <button class="btn" onclick="alert('謝謝你的祝福！(目前為靜態展示，未來可連接資料庫)')">送出祝福</button>
         </div>
-    </div>
-</section>
 
-<footer>
-    <p>© 2026 資工系畢業典禮籌備小組</p>
-</footer>
+        <div class="blessing-list">
+            <div class="blessing-card">
+                <p>「謝謝學長在我們大一進來時的指導，祝你在以後的工作崗位上大顯身手！」</p>
+                <small>— 學弟 王小明 敬上</small>
+            </div>
+            <div class="blessing-card">
+                <p>「恭喜畢業！看到你們努力了四年終於開花結果，真的很替你們高興！」</p>
+                <small>— 學妹 陳美美 敬上</small>
+            </div>
+        </div>
+    </section>
 
-
+    <footer><p>© 2026 資工系學會 畢業典禮籌備組製作</p></footer>
 </body>
 </html>
