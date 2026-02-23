@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>照片回顧 | 2026級畢業紀念站</title>
+<link href="https://www.google.com/search?q=https://fonts.googleapis.com/css2%3Ffamily%3DNoto%2BSans%2BTC:wght%40400%3B700%26display%3Dswap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+.gallery-grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+gap: 20px;
+}
+.gallery-item {
+background: white;
+border-radius: 10px;
+overflow: hidden;
+box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.gallery-item img { width: 100%; height: 200px; object-fit: cover; display: block; }
+.gallery-item p { padding: 10px; text-align: center; font-weight: bold; }
+</style>
+</head>
+<body>
+<header>
+<div class="container nav-container">
+<h2>🎓 畢業紀念站</h2>
+<nav>
+<ul>
+<li><a href="index.html">首頁</a></li>
+<li><a href="gallery.html" class="active">照片回顧</a></li>
+<li><a href="blessings.html">祝福牆</a></li>
+<li><a href="games.html">互動遊戲</a></li>
+</ul>
+</nav>
+</div>
+</header>
+
+<section class="container section">
+    <h2 class="section-title">典禮精彩瞬間</h2>
+    <div class="gallery-grid">
+        <div class="gallery-item">
+            <img src="https://picsum.photos/id/1015/600/400" alt="照片">
+            <p>開幕儀式</p>
+        </div>
+        <div class="gallery-item">
+            <img src="https://picsum.photos/id/1016/600/400" alt="照片">
+            <p>撥穗典禮</p>
+        </div>
+        <div class="gallery-item">
+            <img src="https://picsum.photos/id/1019/600/400" alt="照片">
+            <p>校園合影</p>
+        </div>
+        <div class="gallery-item">
+            <img src="https://picsum.photos/id/1021/600/400" alt="照片">
+            <p>畢業生致詞</p>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <p>© 2026 資工系畢業典禮籌備小組</p>
+</footer>
+
+
+</body>
+</html>
