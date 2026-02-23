@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>祝福牆 | 2026級畢業紀念站</title>
+<link href="https://www.google.com/search?q=https://fonts.googleapis.com/css2%3Ffamily%3DNoto%2BSans%2BTC:wght%40400%3B700%26display%3Dswap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+.blessing-card {
+background: #fffbe6;
+padding: 20px;
+margin-bottom: 20px;
+border-radius: 8px;
+border: 1px dashed #ffd700;
+}
+.blessing-form {
+background: white;
+padding: 30px;
+border-radius: 10px;
+margin-bottom: 40px;
+}
+input, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; }
+</style>
+</head>
+<body>
+<header>
+<div class="container nav-container">
+<h2>🎓 畢業紀念站</h2>
+<nav>
+<ul>
+<li><a href="index.html">首頁</a></li>
+<li><a href="gallery.html">照片回顧</a></li>
+<li><a href="blessings.html" class="active">祝福牆</a></li>
+<li><a href="games.html">互動遊戲</a></li>
+</ul>
+</nav>
+</div>
+</header>
+
+<section class="container section">
+    <h2 class="section-title">給學長姐的悄悄話</h2>
+    
+    <div class="blessing-form">
+        <h3>寫下你的祝福</h3>
+        <input type="text" placeholder="你的姓名">
+        <textarea rows="4" placeholder="在這裡寫下給學長姐的祝福..."></textarea>
+        <button class="btn" style="border:none; cursor:pointer;" onclick="alert('感謝你的留言！(目前為模擬功能，未來可連接資料庫)')">送出祝福</button>
+    </div>
+
+    <div id="messages">
+        <div class="blessing-card">
+            <p>「祝福所有學長姐畢業快樂！在未來的職場上一路順風！」</p>
+            <small>— 學弟 王小明 敬上</small>
+        </div>
+        <div class="blessing-card">
+            <p>「謝謝學長在實作課的照顧，畢業快樂！」</p>
+            <small>— 學妹 李美華 敬上</small>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <p>© 2026 資工系畢業典禮籌備小組</p>
+</footer>
+
+
+</body>
+</html>
