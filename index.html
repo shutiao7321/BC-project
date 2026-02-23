@@ -1,15 +1,56 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SQL 企業管理系統</title>
-    <!-- 👇 就是這一行！這是讓變漂亮的關鍵 👇 -->
-    <script src="https://cdn.tailwindcss.com"></script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026級畢業生祝福典禮紀念站</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="container header-content">
+            <h1 class="logo">🎓 2026級畢業紀念站</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html" class="active">首頁</a></li>
+                    <li><a href="gallery.html">照片回顧</a></li>
+                    <li><a href="blessings.html">祝福留言</a></li>
+                    <li><a href="games.html">互動小遊戲 (Coming Soon)</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-text">
+            <h2>鵬程萬里，珍重再見</h2>
+            <p>致 我們最親愛的學長姐，謝謝你們的帶領。</p>
+            <a href="gallery.html" class="btn">瀏覽典禮照片</a>
+        </div>
+    </section>
+
+    <section class="container section-padding">
+        <h2 class="section-title">典禮精選時刻</h2>
+        <p class="section-intro">這裡紀錄了大家撥穗、歡笑與感動的瞬間。</p>
+        
+        <div class="photo-grid-preview">
+            <div class="photo-item" style="background-image: url('https://picsum.photos/id/1015/400/300');"></div>
+            <div class="photo-item" style="background-image: url('https://picsum.photos/id/1016/400/300');"></div>
+            <div class="photo-item" style="background-image: url('https://picsum.photos/id/1018/400/300');"></div>
+        </div>
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="gallery.html" class="secondary-btn">查看更多照片 →</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container footer-content">
+            <p>© 2026 資工系學會 畢業典禮籌備組製作</p>
+            <p>網頁維護：你的名字 | <a href="https://github.com/你的帳號" target="_blank" style="color: #aaa;">GitHub</a></p>
+        </div>
+    </footer>
+
+</body>
 </html>
