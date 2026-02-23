@@ -4,37 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2026級畢業紀念站 | 首頁</title>
-    <!-- 引入字體 -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* --- 核心變數與重設 --- */
         :root {
-            --primary-color: #003366; /* 學校深藍 */
-            --secondary-color: #FFD700; /* 榮耀金 */
-            --bg-color: #f4f7f9;
+            --primary-color: #003366;
+            --secondary-color: #FFD700;
             --white: #ffffff;
         }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f4f7f9; }
+        .container { width: 90%; max-width: 1200px; margin: 0 auto; }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Noto Sans TC', sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: var(--bg-color);
-        }
-
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        /* --- 導覽列修正 --- */
         header {
             background-color: var(--primary-color);
             color: var(--white);
@@ -42,50 +22,17 @@
             position: sticky;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
+        .nav-content { display: flex; justify-content: space-between; align-items: center; }
+        nav ul { list-style: none; display: flex; gap: 20px; }
+        nav ul li a { color: var(--white); text-decoration: none; font-weight: 500; transition: 0.3s; }
+        nav ul li a:hover, nav ul li a.active { color: var(--secondary-color); }
 
-        .nav-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap; /* 避免手機版擠在一起 */
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        nav ul {
-            list-style: none;
-            display: flex;
-            gap: 20px;
-        }
-
-        nav ul li a {
-            color: var(--white);
-            text-decoration: none;
-            font-weight: 500;
-            transition: 0.3s;
-            padding: 5px 10px;
-            border-radius: 4px;
-        }
-
-        nav ul li a:hover, nav ul li a.active {
-            color: var(--secondary-color);
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        /* --- 主視覺 Hero 區塊修正 (解決跑格關鍵) --- */
         .hero {
-            height: 60vh;
-            min-height: 400px;
+            height: 500px;
+            /* 使用更穩定的背景圖網址 */
             background: linear-gradient(rgba(0, 51, 102, 0.7), rgba(0, 51, 102, 0.7)), 
-                        url('https://images.unsplash.com/photo-1541339907198-e08756ebafe3?auto=format&fit=crop&w=1350&q=80');
+                        url('https://images.unsplash.com/photo-1523050853064-8521a303001e?q=80&w=2000&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
             display: flex;
@@ -93,23 +40,8 @@
             justify-content: center;
             text-align: center;
             color: var(--white);
-            padding: 20px;
         }
-
-        .hero-content h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1.5rem;
-            letter-spacing: 2px;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
-        }
-
-        .hero-content p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-        }
-
-        /* --- 按鈕樣式 --- */
+        .hero-content h1 { font-size: 3rem; margin-bottom: 1rem; }
         .btn {
             display: inline-block;
             padding: 12px 35px;
@@ -119,92 +51,21 @@
             font-weight: bold;
             border-radius: 50px;
             transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
         }
-
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
-            background-color: var(--white);
-        }
-
-        /* --- 內容區塊 --- */
-        .main-section {
-            padding: 80px 0;
-            text-align: center;
-        }
-
-        .section-title {
-            font-size: 2.5rem;
-            color: var(--primary-color);
-            margin-bottom: 15px;
-            position: relative;
-        }
-
-        .section-title::after {
-            content: "";
-            display: block;
-            width: 60px;
-            height: 4px;
-            background: var(--secondary-color);
-            margin: 15px auto;
-        }
-
+        .main-section { padding: 60px 0; text-align: center; }
+        .section-title { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 30px; }
+        
         .photo-grid-preview {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            margin-top: 40px;
+            gap: 20px;
         }
-
-        .photo-card {
-            background: var(--white);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            transition: 0.3s;
-        }
-
-        .photo-card:hover {
-            transform: translateY(-10px);
-        }
-
-        .photo-card img {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-        }
-
-        .photo-card-info {
-            padding: 15px;
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-
-        /* --- 頁尾 --- */
-        footer {
-            background-color: #222;
-            color: #999;
-            padding: 40px 0;
-            text-align: center;
-            font-size: 0.9rem;
-        }
-
-        footer a {
-            color: #ccc;
-            margin-left: 10px;
-        }
-
-        /* 手機版適配 */
-        @media (max-width: 768px) {
-            .hero-content h1 { font-size: 2.2rem; }
-            .nav-content { flex-direction: column; gap: 15px; }
-            nav ul { gap: 10px; font-size: 0.9rem; }
-        }
+        .photo-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .photo-card img { width: 100%; height: 220px; object-fit: cover; }
+        footer { background-color: #222; color: #999; padding: 40px 0; text-align: center; }
     </style>
 </head>
 <body>
-
     <header>
         <div class="container nav-content">
             <div class="logo">🎓 2026級畢業紀念站</div>
@@ -218,45 +79,21 @@
             </nav>
         </div>
     </header>
-
     <section class="hero">
         <div class="hero-content">
             <h1>鵬程萬里，珍重再見</h1>
-            <p>致 我們最親愛的學長姐，謝謝你們在校園裡留下的每一份暖心與專業。</p>
+            <p>紀錄屬於我們的青春時刻</p><br>
             <a href="gallery.html" class="btn">瀏覽典禮照片</a>
         </div>
     </section>
-
     <section class="container main-section">
         <h2 class="section-title">典禮精選時刻</h2>
-        <p>這裡紀錄了大家撥穗、歡笑與感動的瞬間，讓回憶永恆留存。</p>
-        
         <div class="photo-grid-preview">
-            <div class="photo-card">
-                <img src="https://picsum.photos/id/1015/600/400" alt="典禮">
-                <div class="photo-card-info">正式啟程</div>
-            </div>
-            <div class="photo-card">
-                <img src="https://picsum.photos/id/1018/600/400" alt="典禮">
-                <div class="photo-card-info">撥穗榮耀</div>
-            </div>
-            <div class="photo-card">
-                <img src="https://picsum.photos/id/1019/600/400" alt="典禮">
-                <div class="photo-card-info">摯友同框</div>
-            </div>
-        </div>
-        
-        <div style="margin-top: 40px;">
-            <a href="gallery.html" style="color: var(--primary-color); font-weight: bold; text-decoration: none;">查看更多照片 →</a>
+            <div class="photo-card"><img src="https://picsum.photos/id/1015/600/400"><div style="padding:15px;">啟程</div></div>
+            <div class="photo-card"><img src="https://picsum.photos/id/1018/600/400"><div style="padding:15px;">榮耀</div></div>
+            <div class="photo-card"><img src="https://picsum.photos/id/1019/600/400"><div style="padding:15px;">回憶</div></div>
         </div>
     </section>
-
-    <footer>
-        <div class="container">
-            <p>© 2026 資工系學會 畢業典禮籌備組製作</p>
-            <p style="margin-top: 10px;">網頁維護：你的名字 | <a href="https://github.com/你的帳號" target="_blank">GitHub 原始碼</a></p>
-        </div>
-    </footer>
-
+    <footer><p>© 2026 資工系學會</p></footer>
 </body>
 </html>
