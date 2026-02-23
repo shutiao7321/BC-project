@@ -1,104 +1,113 @@
 <!DOCTYPE html>
-
 <html lang="zh-TW">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>互動小遊戲 | 2026級畢業紀念站</title>
-<link href="https://www.google.com/search?q=https://fonts.googleapis.com/css2%3Ffamily%3DNoto%2BSans%2BTC:wght%40400%3B700%26display%3Dswap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-<style>
-#game-container {
-width: 100%;
-height: 400px;
-background-color: #eee;
-position: relative;
-overflow: hidden;
-border-radius: 15px;
-cursor: crosshair;
-}
-.hat {
-font-size: 40px;
-position: absolute;
-transition: 0.1s;
-user-select: none;
-}
-.score { font-size: 1.5rem; color: var(--primary-color); font-weight: bold; margin-bottom: 10px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pop-Dance 小遊戲 | 2026級畢業紀念站</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary-color: #003366; --secondary-color: #FFD700; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #eef2f7; text-align: center; }
+        
+        header { background-color: var(--primary-color); color: white; padding: 1rem 0; }
+        .nav-content { width: 90%; max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        nav ul { list-style: none; display: flex; gap: 20px; }
+        nav ul li a { color: white; text-decoration: none; }
+
+        .game-area { padding: 50px 20px; }
+        .score { font-size: 3rem; font-weight: bold; color: var(--primary-color); margin-bottom: 20px; }
+        
+        /* 遊戲圖片容器 */
+        #pop-container {
+            width: 300px;
+            height: 450px;
+            margin: 0 auto;
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent; /* 防止手機點擊發藍光 */
+        }
+        
+        #pop-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.05s;
+        }
+
+        #pop-img:active {
+            transform: scale(0.95);
+        }
+
+        .instructions { margin-top: 30px; color: #666; }
+    </style>
 </head>
 <body>
-<header>
-<div class="container nav-container">
-<h2>🎓 畢業紀念站</h2>
-<nav>
-<ul>
-<li><a href="index.html">首頁</a></li>
-<li><a href="gallery.html">照片回顧</a></li>
-<li><a href="blessings.html">祝福牆</a></li>
-<li><a href="games.html" class="active">互動遊戲</a></li>
-</ul>
-</nav>
-</div>
-</header>
+    <header>
+        <div class="container nav-content">
+            <div class="logo">🎓 畢業紀念站</div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">首頁</a></li>
+                    <li><a href="gallery.html">照片回顧</a></li>
+                    <li><a href="blessings.html">祝福留言</a></li>
+                    <li><a href="games.html" style="color:var(--secondary-color)">互動小遊戲</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-<section class="container section" style="text-align: center;">
-    <h2 class="section-title">挑戰接住學士帽！</h2>
-    <p style="margin-bottom: 20px;">畢業典禮最後，大家把帽子拋向天空，你能點擊接到幾頂呢？</p>
-    
-    <div class="score">得分: <span id="score-val">0</span></div>
-    <div id="game-container">
-        <div id="start-msg" style="position: absolute; top:50%; left:50%; transform:translate(-50%,-50%);">
-            <button class="btn" style="border:none; cursor:pointer;" onclick="startGame()">點我開始遊戲</button>
+    <div class="game-area">
+        <h2 style="color:var(--primary-color); margin-bottom: 10px;">畢業舞王 Pop-Dance</h2>
+        <div class="score" id="score">0</div>
+        
+        <div id="pop-container">
+            <!-- 預設圖片，你可以換成你朋友的照片 -->
+            <img id="pop-img" src="https://api.dicebear.com/7.x/fun-emoji/svg?seed=1" alt="Pop!">
+        </div>
+
+        <div class="instructions">
+            <p>瘋狂點擊學長姐，一起跳起來！</p>
         </div>
     </div>
-</section>
 
-<script>
-    let score = 0;
-    const container = document.getElementById('game-container');
-    const scoreDisplay = document.getElementById('score-val');
+    <!-- 音效 (選用，若有音效檔可放入) -->
+    <audio id="pop-sound" src="https://www.soundjay.com/buttons/sounds/button-37.mp3"></audio>
 
-    function startGame() {
-        document.getElementById('start-msg').style.display = 'none';
-        score = 0;
-        scoreDisplay.innerText = score;
-        spawnHat();
-    }
+    <script>
+        const popImg = document.getElementById('pop-img');
+        const scoreDisplay = document.getElementById('score');
+        const popSound = document.getElementById('pop-sound');
+        let count = 0;
 
-    function spawnHat() {
-        const hat = document.createElement('div');
-        hat.className = 'hat';
-        hat.innerHTML = '🎓';
-        hat.style.left = Math.random() * (container.clientWidth - 50) + 'px';
-        hat.style.top = container.clientHeight + 'px';
-        container.appendChild(hat);
+        // 圖片位址 (你可以換成你朋友的截圖)
+        const img_normal = "https://github.com/shutiao7321/BC-project/blob/main/firend1.jpg?raw=true"; // 合嘴圖
+        const img_active = "https://github.com/shutiao7321/BC-project/blob/main/firend2.jpg?raw=true"; // 張嘴圖
 
-        // 動畫讓帽子往上飛
-        let pos = container.clientHeight;
-        const anim = setInterval(() => {
-            pos -= 5;
-            hat.style.top = pos + 'px';
-            if (pos < -50) {
-                clearInterval(anim);
-                if (hat.parentNode) container.removeChild(hat);
-                spawnHat(); // 帽子飛走，下一頂
-            }
-        }, 20);
+        function pop() {
+            count++;
+            scoreDisplay.innerText = count;
+            
+            // 切換成開嘴圖
+            popImg.src = img_active;
+            
+            // 播放音效
+            popSound.currentTime = 0;
+            popSound.play();
 
-        hat.onclick = () => {
-            score++;
-            scoreDisplay.innerText = score;
-            clearInterval(anim);
-            container.removeChild(hat);
-            spawnHat();
-        };
-    }
-</script>
+            // 0.1 秒後換回合嘴圖
+            setTimeout(() => {
+                popImg.src = img_normal;
+            }, 100);
+        }
 
-<footer>
-    <p>© 2026 資工系畢業典禮籌備小組</p>
-</footer>
-
-
+        // 監聽滑鼠與觸控事件
+        const container = document.getElementById('pop-container');
+        container.addEventListener('mousedown', pop);
+        container.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // 防止手機連點縮放
+            pop();
+        });
+    </script>
 </body>
 </html>
