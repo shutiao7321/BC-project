@@ -84,7 +84,7 @@ nav ul li a:hover, nav ul li a.active {
 /* --- 主視覺橫幅 (Hero Banner) --- */
 .hero {
     /* 這裡記得換成你們學校或典禮的大合照 */
-    background-image: linear-gradient(rgba(0, 51, 102, 0.7), rgba(0, 51, 102, 0.7)), url('https://github.com/shutiao7321/BC-project/blob/main/%E8%83%8C%E6%99%AF.jpg'); 
+    background-image: linear-gradient(rgba(0, 51, 102, 0.7), rgba(0, 51, 102, 0.7)), url('https://picsum.photos/id/1025/1920/800'); 
     background-size: cover;
     background-position: center;
     color: white;
@@ -153,4 +153,5 @@ footer {
     text-align: center;
     padding: 20px 0;
     margin-top: 40px;
+
 }
