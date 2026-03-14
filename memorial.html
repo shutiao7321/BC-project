@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>製作紀念明信片 | 2026級畢業紀念站</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary-color: #003366; --secondary-color: #FFD700; --bg-color: #f4f7f9; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg-color); }
+        .container { width: 95%; max-width: 1200px; margin: 0 auto; }
+
+        header { background-color: var(--primary-color); color: white; padding: 1.2rem 0; }
+        .nav-content { display: flex; justify-content: space-between; align-items: center; }
+        nav ul { list-style: none; display: flex; gap: 15px; }
+        nav ul li a { color: white; text-decoration: none; padding: 5px 10px; }
+        nav ul li a.active { color: var(--secondary-color); }
+
+        .editor-layout { display: flex; flex-wrap: wrap; gap: 30px; padding: 40px 0; align-items: flex-start; }
+        
+        /* 左側控制區 */
+        .controls { flex: 1; min-width: 300px; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .controls h2 { color: var(--primary-color); margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; }
+        
+        .template-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
+        .tpl-btn { cursor: pointer; border: 2px solid transparent; border-radius: 5px; overflow: hidden; height: 60px; }
+        .tpl-btn.active { border-color: var(--primary-color); }
+        .tpl-btn div { width: 100%; height: 100%; }
+
+        /* 右側預覽區 */
+        .preview-area { flex: 1.2; min-width: 350px; display: flex; flex-direction: column; align-items: center; }
+        #postcard-canvas { 
+            max-width: 100%; 
+            height: auto; 
+            border-radius: 10px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+            background: white;
+        }
+        .action-btns { margin-top: 25px; width: 100%; display: flex; gap: 10px; }
+        .btn { flex: 1; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-primary { background: var(--primary-color); color: white; }
+        .btn-download { background: var(--secondary-color); color: var(--primary-color); }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        footer { background-color: #222; color: #999; padding: 30px 0; text-align: center; margin-top: 50px; }
+
+        @media (max-width: 768px) { .editor-layout { flex-direction: column; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container nav-content">
+            <div class="logo">🎓 2026級畢業紀念站</div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">首頁</a></li>
+                    <li><a href="gallery.html">照片回顧</a></li>
+                    <li><a href="blessings.html">祝福留言</a></li>
+                    <li><a href="memorial.html" class="active">紀念明信片</a></li>
+                    <li><a href="games.html">互動小遊戲</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="container">
+        <div class="editor-layout">
+            <!-- 控制區 -->
+            <div class="controls">
+                <h2>🎴 明信片工作台</h2>
+                <div class="form-group">
+                    <label>選擇模板風格</label>
+                    <div class="template-selector">
+                        <div class="tpl-btn active" onclick="setTemplate(0)" style="background: linear-gradient(135deg, #003366, #001f40);"></div>
+                        <div class="tpl-btn" onclick="setTemplate(1)" style="background: linear-gradient(135deg, #fff5f5, #ffd1d1);"></div>
+                        <div class="tpl-btn" onclick="setTemplate(2)" style="background: linear-gradient(135deg, #e0f7fa, #80deea);"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>學長姐姓名</label>
+                    <input type="text" id="recipient" placeholder="例：王大明 學長" oninput="draw()">
+                </div>
+                <div class="form-group">
+                    <label>畢業感言 / 祝福語</label>
+                    <textarea id="message" rows="5" placeholder="輸入你想說的話..." oninput="draw()">鵬程萬里，前程似錦！希望在未來的道路上，我們都能保持這份初心，勇敢追逐夢想。</textarea>
+                </div>
+                <div class="form-group">
+                    <label>下款署名</label>
+                    <input type="text" id="sender" placeholder="例：學弟妹全體 敬賀" oninput="draw()">
+                </div>
+            </div>
+
+            <!-- 預覽區 -->
+            <div class="preview-area">
+                <canvas id="postcard-canvas" width="800" height="560"></canvas>
+                <div class="action-btns">
+                    <button class="btn btn-download" onclick="downloadCard()">💾 下載明信片圖片</button>
+                </div>
+                <p style="margin-top:15px; color:#666; font-size:0.9rem;">提示：手機用戶長按圖片亦可儲存</p>
+            </div>
+        </div>
+    </section>
+
+    <footer><p>© 2026 資工系學會 | 畢業紀念明信片生成器</p></footer>
+
+    <script>
+        const canvas = document.getElementById('postcard-canvas');
+        const ctx = canvas.getContext('2d');
+        let currentTpl = 0;
+
+        const templates = [
+            { bg: '#003366', text: '#FFD700', sub: '#ffffff', accent: '#002244' }, // 學院深藍
+            { bg: '#fff5f5', text: '#d63384', sub: '#555555', accent: '#ffd1d1' }, // 櫻粉花語
+            { bg: '#f0f4f8', text: '#1a3a5f', sub: '#4a5568', accent: '#d1e3f8' }  // 清新極簡
+        ];
+
+        function setTemplate(index) {
+            currentTpl = index;
+            document.querySelectorAll('.tpl-btn').forEach((b, i) => {
+                b.classList.toggle('active', i === index);
+            });
+            draw();
+        }
+
+        function draw() {
+            const tpl = templates[currentTpl];
+            const recipient = document.getElementById('recipient').value || "親愛的學長姐";
+            const message = document.getElementById('message').value || "畢業快樂！";
+            const sender = document.getElementById('sender').value || "2026級全體同學";
+
+            // 1. 背景
+            ctx.fillStyle = tpl.bg;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 2. 邊框裝飾
+            ctx.strokeStyle = tpl.text;
+            ctx.lineWidth = 2;
+            ctx.strokeRect(30, 30, canvas.width - 60, canvas.height - 60);
+            
+            // 3. 繪製標誌或裝飾
+            ctx.font = 'bold 24px "Noto Sans TC"';
+            ctx.fillStyle = tpl.text;
+            ctx.fillText('🎓 GRADUATION 2026', 60, 80);
+
+            // 4. 收件人
+            ctx.font = 'bold 36px "Noto Sans TC"';
+            ctx.fillText(`To: ${recipient}`, 60, 160);
+
+            // 5. 內文 (處理換行)
+            ctx.font = '28px "Noto Sans TC"';
+            ctx.fillStyle = tpl.sub;
+            const words = message.split('');
+            let line = '';
+            let x = 60, y = 220;
+            const maxWidth = 680;
+            const lineHeight = 45;
+
+            for (let n = 0; n < words.length; n++) {
+                let testLine = line + words[n];
+                let metrics = ctx.measureText(testLine);
+                if (metrics.width > maxWidth && n > 0) {
+                    ctx.fillText(line, x, y);
+                    line = words[n];
+                    y += lineHeight;
+                } else {
+                    line = testLine;
+                }
+            }
+            ctx.fillText(line, x, y);
+
+            // 6. 署名 (靠右)
+            ctx.font = 'bold 30px "Noto Sans TC"';
+            ctx.fillStyle = tpl.text;
+            ctx.textAlign = 'right';
+            ctx.fillText(sender, canvas.width - 80, canvas.height - 80);
+            ctx.textAlign = 'left'; // 重置
+
+            // 7. 郵票裝飾
+            ctx.fillStyle = tpl.accent;
+            ctx.fillRect(canvas.width - 150, 60, 90, 110);
+            ctx.strokeStyle = tpl.text;
+            ctx.strokeRect(canvas.width - 140, 70, 70, 90);
+            ctx.font = '14px "Noto Sans TC"';
+            ctx.fillText('2026', canvas.width - 120, 130);
+        }
+
+        function downloadCard() {
+            const link = document.createElement('a');
+            link.download = `畢業紀念明信片-${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // 初始繪製
+        window.onload = draw;
+    </script>
+</body>
+</html>
