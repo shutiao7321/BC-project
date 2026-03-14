@@ -32,9 +32,9 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            transition: transform 0.05s; /* 增加點擊手感 */
+            transition: transform 0.05s;
         }
-        #pop-container:active { transform: scale(0.95); } /* 點擊時縮小 */
+        #pop-container:active { transform: scale(0.95); }
         
         #pop-img { max-width: 100%; max-height: 100%; object-fit: contain; -webkit-user-drag: none; pointer-events: none; }
 
@@ -118,7 +118,7 @@
         import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- 全域變數 ---
-        let auth, db, user = null, nickname = "", localScore = 0;
+        let auth = null, db = null, user = null, nickname = "", localScore = 0;
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'pop-dance-v1';
         
         const popImg = document.getElementById('pop-img');
@@ -140,9 +140,21 @@
             const app = initializeApp(firebaseConfig);
             auth = getAuth(app);
             db = getFirestore(app);
-        } catch (e) { console.error("Firebase Init Error:", e); }
+            
+            // 監聽登入狀態
+            onAuthStateChanged(auth, (u) => {
+                if (u) {
+                    user = u;
+                    loadUserScore();
+                    startLeaderboardListener();
+                }
+            });
+        } catch (e) { 
+            console.error("Firebase Init Error:", e);
+            listContainer.innerHTML = `<li style="text-align:center; padding:10px; color:orange;">本機預覽模式：無法連線資料庫</li>`;
+        }
 
-        // --- 核心遊戲函數 (現在宣告在 Module 作用域) ---
+        // --- 核心遊戲函數 ---
         function pop() {
             localScore++;
             scoreDisplay.innerText = localScore;
@@ -152,8 +164,10 @@
             popSound.currentTime = 0;
             popSound.play().catch(() => {});
             
-            // 雲端同步
-            syncScore();
+            // 只有在成功連線時才嘗試同步
+            if (user && nickname) {
+                syncScore();
+            }
         }
 
         function unpop() {
@@ -173,6 +187,8 @@
             nickname = input.value.trim();
             document.getElementById('name-modal').style.display = 'none';
             
+            if (!auth) return; // 如果 Firebase 沒開，至少讓彈窗消失可以玩本機版
+
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
@@ -182,25 +198,20 @@
             } catch (err) { console.error("Login Error:", err); }
         };
 
-        onAuthStateChanged(auth, (u) => {
-            if (u) {
-                user = u;
-                loadUserScore();
-                startLeaderboardListener();
-            }
-        });
-
         const loadUserScore = async () => {
-            if (!user) return;
-            const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', user.uid);
-            const snap = await getDoc(userRef);
-            if (snap.exists()) {
-                localScore = snap.data().score || 0;
-                scoreDisplay.innerText = localScore;
-            }
+            if (!user || !db) return;
+            try {
+                const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', user.uid);
+                const snap = await getDoc(userRef);
+                if (snap.exists()) {
+                    localScore = snap.data().score || 0;
+                    scoreDisplay.innerText = localScore;
+                }
+            } catch (e) { console.error("Load Score Error:", e); }
         };
 
         const startLeaderboardListener = () => {
+            if (!db) return;
             const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard');
             onSnapshot(colRef, (snapshot) => {
                 const data = [];
@@ -208,7 +219,8 @@
                 data.sort((a, b) => (b.score || 0) - (a.score || 0));
                 renderLeaderboard(data.slice(0, 10));
             }, (err) => {
-                listContainer.innerHTML = `<li style="text-align:center; padding:10px; color:red;">連線問題: ${err.message}</li>`;
+                console.error("Snapshot error:", err);
+                listContainer.innerHTML = `<li style="text-align:center; padding:10px; color:red;">讀取排行失敗</li>`;
             });
         };
 
@@ -227,19 +239,21 @@
 
         let saveTimer = null;
         const syncScore = () => {
-            if (!user || !nickname) return;
+            if (!user || !nickname || !db) return;
             if (saveTimer) clearTimeout(saveTimer);
             saveTimer = setTimeout(async () => {
-                const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', user.uid);
-                await setDoc(userRef, {
-                    nickname: nickname,
-                    score: localScore,
-                    lastUpdated: Date.now()
-                }, { merge: true });
-            }, 1500); // 停止點擊後 1.5 秒更新
+                try {
+                    const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', user.uid);
+                    await setDoc(userRef, {
+                        nickname: nickname,
+                        score: localScore,
+                        lastUpdated: Date.now()
+                    }, { merge: true });
+                } catch (e) { console.error("Sync Error:", e); }
+            }, 1500); 
         };
 
-        // --- 事件綁定 (確保在 Script Module 內正確執行) ---
+        // --- 事件綁定 ---
         container.addEventListener('mousedown', (e) => {
             if (e.button === 0) pop();
         });
@@ -247,7 +261,6 @@
         window.addEventListener('mouseup', unpop);
 
         container.addEventListener('touchstart', (e) => {
-            // 防止捲動並觸發 POP
             if (e.cancelable) e.preventDefault();
             pop();
         }, { passive: false });
