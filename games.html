@@ -8,7 +8,7 @@
     <style>
         :root { --primary-color: #003366; --secondary-color: #FFD700; --white: #ffffff; --bg-color: #f4f7f9; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg-color); text-align: center; }
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg-color); text-align: center; overflow-x: hidden; }
         
         header { background-color: var(--primary-color); color: var(--white); padding: 1.2rem 0; position: sticky; top: 0; z-index: 1000; }
         .nav-content { display: flex; justify-content: space-between; align-items: center; width: 90%; max-width: 1200px; margin: 0 auto; }
@@ -32,8 +32,11 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            transition: transform 0.05s; /* 增加點擊手感 */
         }
-        #pop-img { max-width: 100%; max-height: 100%; object-fit: contain; -webkit-user-drag: none; }
+        #pop-container:active { transform: scale(0.95); } /* 點擊時縮小 */
+        
+        #pop-img { max-width: 100%; max-height: 100%; object-fit: contain; -webkit-user-drag: none; pointer-events: none; }
 
         .leaderboard {
             max-width: 500px;
@@ -50,7 +53,7 @@
 
         .modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 2000;
+            background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 2000;
         }
         .modal-content { background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 400px; }
         .modal-content h3 { margin-bottom: 10px; color: var(--primary-color); }
@@ -114,26 +117,50 @@
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // 全域變數
-        let auth, db, user = null, nickname = "", localScore = 0, isSyncing = false;
+        // --- 全域變數 ---
+        let auth, db, user = null, nickname = "", localScore = 0;
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'pop-dance-v1';
+        
+        const popImg = document.getElementById('pop-img');
+        const scoreDisplay = document.getElementById('score');
+        const popSound = document.getElementById('pop-sound');
+        const listContainer = document.getElementById('leaderboard-list');
+        const container = document.getElementById('pop-container');
 
-        // 初始化 Firebase (加入錯誤處理)
+        const img_normal = "friend1.jpg";
+        const img_active = "friend2.jpg";
+
+        // 預載圖片
+        const preload = new Image();
+        preload.src = img_active;
+
+        // --- Firebase 初始化 ---
         try {
             const firebaseConfig = JSON.parse(__firebase_config);
             const app = initializeApp(firebaseConfig);
             auth = getAuth(app);
             db = getFirestore(app);
-        } catch (e) {
-            console.error("Firebase 初始化失敗:", e);
+        } catch (e) { console.error("Firebase Init Error:", e); }
+
+        // --- 核心遊戲函數 (現在宣告在 Module 作用域) ---
+        function pop() {
+            localScore++;
+            scoreDisplay.innerText = localScore;
+            popImg.src = img_active;
+            
+            // 聲音處理
+            popSound.currentTime = 0;
+            popSound.play().catch(() => {});
+            
+            // 雲端同步
+            syncScore();
         }
 
-        const popImg = document.getElementById('pop-img');
-        const scoreDisplay = document.getElementById('score');
-        const popSound = document.getElementById('pop-sound');
-        const listContainer = document.getElementById('leaderboard-list');
+        function unpop() {
+            popImg.src = img_normal;
+        }
 
-        // 啟動 App 函數掛載到 window
+        // --- 啟動與登入 ---
         window.startApp = async () => {
             const input = document.getElementById('nickname-input');
             const errorMsg = document.getElementById('error-msg');
@@ -146,19 +173,15 @@
             nickname = input.value.trim();
             document.getElementById('name-modal').style.display = 'none';
             
-            // 執行登入 (Rule 3)
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
                 } else {
                     await signInAnonymously(auth);
                 }
-            } catch (err) {
-                console.error("登入失敗:", err);
-            }
+            } catch (err) { console.error("Login Error:", err); }
         };
 
-        // 監聽登入狀態
         onAuthStateChanged(auth, (u) => {
             if (u) {
                 user = u;
@@ -167,7 +190,6 @@
             }
         });
 
-        // 載入分數
         const loadUserScore = async () => {
             if (!user) return;
             const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', user.uid);
@@ -178,7 +200,6 @@
             }
         };
 
-        // 即時排行榜監聽
         const startLeaderboardListener = () => {
             const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard');
             onSnapshot(colRef, (snapshot) => {
@@ -187,13 +208,13 @@
                 data.sort((a, b) => (b.score || 0) - (a.score || 0));
                 renderLeaderboard(data.slice(0, 10));
             }, (err) => {
-                listContainer.innerHTML = `<li style="text-align:center; padding:20px; color:red;">連線錯誤: ${err.message}</li>`;
+                listContainer.innerHTML = `<li style="text-align:center; padding:10px; color:red;">連線問題: ${err.message}</li>`;
             });
         };
 
         const renderLeaderboard = (topUsers) => {
             if (topUsers.length === 0) {
-                listContainer.innerHTML = `<li style="text-align:center; padding:20px;">尚無紀錄，快來當第一個舞王！</li>`;
+                listContainer.innerHTML = `<li style="text-align:center; padding:20px;">還沒有紀錄，快當第一個！</li>`;
                 return;
             }
             listContainer.innerHTML = topUsers.map((u, index) => `
@@ -204,10 +225,9 @@
             `).join('');
         };
 
-        // 雲端同步 (Debounce 2秒)
         let saveTimer = null;
         const syncScore = () => {
-            if (!user) return;
+            if (!user || !nickname) return;
             if (saveTimer) clearTimeout(saveTimer);
             saveTimer = setTimeout(async () => {
                 const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', user.uid);
@@ -216,30 +236,27 @@
                     score: localScore,
                     lastUpdated: Date.now()
                 }, { merge: true });
-            }, 2000);
+            }, 1500); // 停止點擊後 1.5 秒更新
         };
 
-        // 遊戲動作
-        const img_normal = "friend1.jpg";
-        const img_active = "friend2.jpg";
-        const preload = new Image(); preload.src = img_active;
-
-        function pop() {
-            localScore++;
-            scoreDisplay.innerText = localScore;
-            popImg.src = img_active;
-            popSound.currentTime = 0;
-            popSound.play().catch(() => {});
-            syncScore();
-        }
-
-        function unpop() { popImg.src = img_normal; }
-
-        const container = document.getElementById('pop-container');
-        container.addEventListener('mousedown', (e) => { if(e.button === 0) pop(); });
+        // --- 事件綁定 (確保在 Script Module 內正確執行) ---
+        container.addEventListener('mousedown', (e) => {
+            if (e.button === 0) pop();
+        });
+        
         window.addEventListener('mouseup', unpop);
-        container.addEventListener('touchstart', (e) => { e.preventDefault(); pop(); });
-        container.addEventListener('touchend', (e) => { e.preventDefault(); unpop(); });
+
+        container.addEventListener('touchstart', (e) => {
+            // 防止捲動並觸發 POP
+            if (e.cancelable) e.preventDefault();
+            pop();
+        }, { passive: false });
+
+        container.addEventListener('touchend', (e) => {
+            if (e.cancelable) e.preventDefault();
+            unpop();
+        }, { passive: false });
+
     </script>
 </body>
 </html>
