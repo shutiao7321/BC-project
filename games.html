@@ -35,7 +35,6 @@
         }
         #pop-img { max-width: 100%; max-height: 100%; object-fit: contain; -webkit-user-drag: none; }
 
-        /* 排行榜樣式 */
         .leaderboard {
             max-width: 500px;
             margin: 40px auto;
@@ -47,29 +46,30 @@
         .leaderboard h3 { color: var(--primary-color); margin-bottom: 15px; border-bottom: 2px solid var(--secondary-color); padding-bottom: 5px; }
         .leaderboard-list { list-style: none; text-align: left; }
         .leaderboard-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; }
-        .leaderboard-item:last-child { border-bottom: none; }
         .rank { font-weight: bold; color: var(--secondary-color); margin-right: 10px; }
 
-        /* 彈窗樣式 */
         .modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 2000;
         }
         .modal-content { background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 400px; }
-        .modal-content input { width: 100%; padding: 12px; margin: 20px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
-        .btn { border: none; cursor: pointer; padding: 12px 30px; background: var(--primary-color); color: white; border-radius: 8px; font-weight: bold; width: 100%; }
+        .modal-content h3 { margin-bottom: 10px; color: var(--primary-color); }
+        .modal-content input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
+        .btn { border: none; cursor: pointer; padding: 12px 30px; background: var(--primary-color); color: white; border-radius: 8px; font-weight: bold; width: 100%; transition: 0.3s; }
+        .btn:hover { background: #002244; }
 
         footer { background-color: #222; color: #999; padding: 40px 0; border-top: 4px solid var(--secondary-color); }
     </style>
 </head>
 <body>
 
-    <!-- 暱稱輸入彈窗 -->
     <div id="name-modal" class="modal">
         <div class="modal-content">
-            <h3>輸入你的舞王暱稱</h3>
+            <h3>🏆 舞王挑戰開始</h3>
+            <p>輸入你的暱稱以登錄排行榜</p>
             <input type="text" id="nickname-input" placeholder="例如：資工三 小明" maxlength="15">
             <button class="btn" onclick="startApp()">進入遊戲</button>
+            <p id="error-msg" style="color: red; font-size: 0.8rem; margin-top: 10px; display: none;">請輸入暱稱後再開始！</p>
         </div>
     </div>
 
@@ -92,16 +92,15 @@
         <div class="score" id="score">0</div>
         
         <div id="pop-container">
-            <img id="pop-img" src="friend1.jpg" alt="Loading...">
+            <img id="pop-img" src="friend1.jpg" alt="點擊開始跳舞！">
         </div>
 
-        <p style="margin-top:15px; color:#666;">點擊學長姐，衝向排行榜第一！</p>
+        <p style="margin-top:15px; color:#666;">瘋狂點擊學長姐，衝向排行榜第一！</p>
 
-        <!-- 排行榜區塊 -->
         <div class="leaderboard">
-            <h3>🏆 點擊排行榜</h3>
+            <h3>🏆 即時排行榜 (前10名)</h3>
             <ul id="leaderboard-list" class="leaderboard-list">
-                <li style="text-align:center; padding:20px;">載入排行榜中...</li>
+                <li style="text-align:center; padding:20px;">正在連線至雲端資料庫...</li>
             </ul>
         </div>
     </section>
@@ -110,38 +109,56 @@
 
     <footer><p>© 2026 資工系學會 畢業典禮籌備組製作</p></footer>
 
-    <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // 1. 初始化 Firebase
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'pop-dance-app';
+        // 全域變數
+        let auth, db, user = null, nickname = "", localScore = 0, isSyncing = false;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'pop-dance-v1';
 
-        let user = null;
-        let nickname = "";
-        let localScore = 0;
-        let isSyncing = false;
+        // 初始化 Firebase (加入錯誤處理)
+        try {
+            const firebaseConfig = JSON.parse(__firebase_config);
+            const app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+        } catch (e) {
+            console.error("Firebase 初始化失敗:", e);
+        }
 
         const popImg = document.getElementById('pop-img');
         const scoreDisplay = document.getElementById('score');
         const popSound = document.getElementById('pop-sound');
         const listContainer = document.getElementById('leaderboard-list');
 
-        // 2. 身份驗證 (Rule 3)
-        const initAuth = async () => {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-                await signInAnonymously(auth);
+        // 啟動 App 函數掛載到 window
+        window.startApp = async () => {
+            const input = document.getElementById('nickname-input');
+            const errorMsg = document.getElementById('error-msg');
+            
+            if (!input.value.trim()) {
+                errorMsg.style.display = 'block';
+                return;
+            }
+            
+            nickname = input.value.trim();
+            document.getElementById('name-modal').style.display = 'none';
+            
+            // 執行登入 (Rule 3)
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (err) {
+                console.error("登入失敗:", err);
             }
         };
 
+        // 監聽登入狀態
         onAuthStateChanged(auth, (u) => {
             if (u) {
                 user = u;
@@ -150,16 +167,7 @@
             }
         });
 
-        // 啟動 App
-        window.startApp = () => {
-            const input = document.getElementById('nickname-input').value.trim();
-            if (!input) return;
-            nickname = input;
-            document.getElementById('name-modal').style.display = 'none';
-            initAuth();
-        };
-
-        // 3. 讀取使用者原本的點擊數
+        // 載入分數
         const loadUserScore = async () => {
             if (!user) return;
             const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', user.uid);
@@ -170,21 +178,24 @@
             }
         };
 
-        // 4. 排行榜即時監聽 (Rule 1 & 2)
+        // 即時排行榜監聽
         const startLeaderboardListener = () => {
             const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard');
             onSnapshot(colRef, (snapshot) => {
                 const data = [];
-                snapshot.forEach(doc => data.push({ id: doc.id, ...doc.data() }));
-                
-                // 在記憶體中排序 (Rule 2)
+                snapshot.forEach(doc => data.push(doc.data()));
                 data.sort((a, b) => (b.score || 0) - (a.score || 0));
-                
                 renderLeaderboard(data.slice(0, 10));
-            }, (err) => console.error("Snapshot error:", err));
+            }, (err) => {
+                listContainer.innerHTML = `<li style="text-align:center; padding:20px; color:red;">連線錯誤: ${err.message}</li>`;
+            });
         };
 
         const renderLeaderboard = (topUsers) => {
+            if (topUsers.length === 0) {
+                listContainer.innerHTML = `<li style="text-align:center; padding:20px;">尚無紀錄，快來當第一個舞王！</li>`;
+                return;
+            }
             listContainer.innerHTML = topUsers.map((u, index) => `
                 <li class="leaderboard-item">
                     <span><span class="rank">#${index + 1}</span> ${u.nickname || '匿名舞者'}</span>
@@ -193,25 +204,22 @@
             `).join('');
         };
 
-        // 5. 更新點擊數至雲端 (加上 Debounce 防止過度寫入)
+        // 雲端同步 (Debounce 2秒)
         let saveTimer = null;
         const syncScore = () => {
-            if (!user || isSyncing) return;
+            if (!user) return;
             if (saveTimer) clearTimeout(saveTimer);
-            
             saveTimer = setTimeout(async () => {
-                isSyncing = true;
                 const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', user.uid);
                 await setDoc(userRef, {
                     nickname: nickname,
                     score: localScore,
                     lastUpdated: Date.now()
                 }, { merge: true });
-                isSyncing = false;
-            }, 2000); // 停止點擊 2 秒後上傳
+            }, 2000);
         };
 
-        // 遊戲核心邏輯
+        // 遊戲動作
         const img_normal = "friend1.jpg";
         const img_active = "friend2.jpg";
         const preload = new Image(); preload.src = img_active;
