@@ -6,25 +6,196 @@
     <title>2026級畢業紀念站 | 首頁</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary-color: #003366; --secondary-color: #FFD700; --white: #ffffff; --bg-color: #f4f7f9; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg-color); color: #333; }
-        .container { width: 90%; max-width: 1200px; margin: 0 auto; }
-        header { background-color: var(--primary-color); color: var(--white); padding: 1.2rem 0; position: sticky; top: 0; z-index: 1000; }
-        .nav-content { display: flex; justify-content: space-between; align-items: center; }
+        :root {
+            --primary-color: #003366;
+            --secondary-color: #FFD700;
+            --white: #ffffff;
+            --bg-color: #f0f2f5;
+            --card-height: 180px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: var(--bg-color);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* --- 導覽列 --- */
+        header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 1.2rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo { font-size: 1.5rem; font-weight: 700; }
+
         nav ul { list-style: none; display: flex; gap: 15px; }
-        nav ul li a { color: var(--white); text-decoration: none; font-weight: 500; padding: 5px 10px; transition: 0.3s; }
+
+        nav ul li a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 5px 10px;
+            transition: 0.3s;
+        }
+
         nav ul li a:hover, nav ul li a.active { color: var(--secondary-color); }
-        .hero { height: 450px; background: linear-gradient(rgba(0,51,102,0.7), rgba(0,51,102,0.7)), url('https://images.unsplash.com/photo-1523050853064-8521a303001e?q=80&w=2000&auto=format&fit=crop'); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--white); }
-        .main-section { padding: 60px 0; text-align: center; }
-        .section-title { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 30px; }
-        .photo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .photo-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .photo-card img { width: 100%; height: 220px; object-fit: cover; }
-        footer { background-color: #222; color: #999; padding: 40px 0; text-align: center; border-top: 4px solid var(--secondary-color); }
+
+        /* --- 主視覺圖 (bg1.jpg) --- */
+        .main-visual {
+            width: 100%;
+            height: 60vh;
+            min-height: 400px;
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('bg1.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+        }
+
+        .hero-text h1 {
+            font-size: 3.5rem;
+            letter-spacing: 5px;
+            text-shadow: 3px 3px 10px rgba(0,0,0,0.5);
+            margin-bottom: 10px;
+        }
+
+        /* --- 階梯式方框佈局 --- */
+        .staircase-container {
+            width: 90%;
+            max-width: 1000px;
+            margin: -50px auto 80px; /* 向上偏移與主視覺銜接 */
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .stair-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            width: 100%;
+            max-width: 800px;
+            height: var(--card-height);
+            position: relative;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* 階梯偏移效果 (Desktop) */
+        .stair-1 { align-self: flex-start; }
+        .stair-2 { align-self: flex-start; margin-left: 10%; }
+        .stair-3 { align-self: flex-start; margin-left: 20%; }
+        .stair-4 { align-self: flex-start; margin-left: 30%; }
+
+        /* 滑動動作效果 */
+        .stair-link::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .stair-link:hover {
+            transform: translateX(20px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(0,51,102,0.2);
+            z-index: 10;
+        }
+
+        .stair-link:hover::before {
+            left: 100%;
+        }
+
+        /* 方框內容佈局 */
+        .stair-content {
+            display: flex;
+            height: 100%;
+            align-items: center;
+        }
+
+        .stair-icon {
+            width: 120px;
+            height: 100%;
+            background-color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--secondary-color);
+            transition: 0.3s;
+        }
+
+        .stair-link:hover .stair-icon {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+        }
+
+        .stair-text {
+            padding: 30px;
+            flex-grow: 1;
+        }
+
+        .stair-text h3 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        .stair-text p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* --- 頁尾 --- */
+        footer {
+            background-color: #222;
+            color: #999;
+            padding: 40px 0;
+            text-align: center;
+            border-top: 4px solid var(--secondary-color);
+        }
+
+        /* 手機版適配：取消階梯偏移 */
+        @media (max-width: 900px) {
+            .stair-2, .stair-3, .stair-4 { margin-left: 0; }
+            .stair-link { align-self: center; }
+            .hero-text h1 { font-size: 2.5rem; }
+            .stair-icon { width: 80px; font-size: 2rem; }
+        }
     </style>
 </head>
 <body>
+
     <header>
         <div class="container nav-content">
             <div class="logo">🎓 2026級畢業紀念站</div>
@@ -39,21 +210,64 @@
             </nav>
         </div>
     </header>
-    <section class="hero">
-        <div class="hero-content">
-            <h1>鵬程萬里，珍重再見</h1>
-            <p>在那年夏天，我們一起寫下的回憶。</p><br>
-            <a href="memorial.html" style="background:var(--secondary-color); color:var(--primary-color); padding:10px 25px; border-radius:30px; text-decoration:none; font-weight:bold;">製作我的紀念明信片</a>
+
+    <!-- 主視覺圖區區 -->
+    <section class="main-visual">
+        <div class="hero-text">
+            <h1>2026 珍重再見</h1>
+            <p>在那年夏天，我們一起寫下的回憶。</p>
         </div>
     </section>
-    <section class="container main-section">
-        <h2 class="section-title">典禮精選時刻</h2>
-        <div class="photo-grid">
-            <div class="photo-card"><img src="https://picsum.photos/id/1015/600/400"><div style="padding:15px;">啟程</div></div>
-            <div class="photo-card"><img src="https://picsum.photos/id/1018/600/400"><div style="padding:15px;">榮耀</div></div>
-            <div class="photo-card"><img src="https://picsum.photos/id/1019/600/400"><div style="padding:15px;">回憶</div></div>
-        </div>
-    </section>
-    <footer><p>© 2026 資工系學會 畢業典禮籌備組製作</p></footer>
+
+    <!-- 階梯式連結區 -->
+    <main class="staircase-container">
+        
+        <a href="gallery.html" class="stair-link stair-1">
+            <div class="stair-content">
+                <div class="stair-icon">🖼️</div>
+                <div class="stair-text">
+                    <h3>照片回顧</h3>
+                    <p>重溫典禮現場的感動瞬間與校園點滴</p>
+                </div>
+            </div>
+        </a>
+
+        <a href="blessings.html" class="stair-link stair-2">
+            <div class="stair-content">
+                <div class="stair-icon">✉️</div>
+                <div class="stair-text">
+                    <h3>祝福留言</h3>
+                    <p>留下你想對學長姐說的悄悄話</p>
+                </div>
+            </div>
+        </a>
+
+        <a href="memorial.html" class="stair-link stair-3">
+            <div class="stair-content">
+                <div class="stair-icon">🎴</div>
+                <div class="stair-text">
+                    <h3>紀念明信片</h3>
+                    <p>客製化專屬的畢業感言明信片並下載留存</p>
+                </div>
+            </div>
+        </a>
+
+        <a href="games.html" class="stair-link stair-4">
+            <div class="stair-content">
+                <div class="stair-icon">🕹️</div>
+                <div class="stair-text">
+                    <h3>互動小遊戲</h3>
+                    <p>挑戰畢業舞王 Pop-Dance 排行榜</p>
+                </div>
+            </div>
+        </a>
+
+    </main>
+
+    <footer>
+        <p>© 2026 資工系學會 畢業典禮籌備組製作</p>
+        <p style="margin-top: 10px; font-size: 0.8rem;">網頁維護：你的名字 | 建議使用手機或電腦全螢幕瀏覽</p>
+    </footer>
+
 </body>
 </html>
