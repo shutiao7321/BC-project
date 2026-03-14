@@ -6,50 +6,22 @@
     <title>2026級畢業紀念站 | 首頁</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* --- 全站共用變數與樣式 --- */
-        :root {
-            --primary-color: #003366;
-            --secondary-color: #FFD700;
-            --white: #ffffff;
-            --bg-color: #f4f7f9;
-        }
+        :root { --primary-color: #003366; --secondary-color: #FFD700; --white: #ffffff; --bg-color: #f4f7f9; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg-color); color: #333; }
         .container { width: 90%; max-width: 1200px; margin: 0 auto; }
-
-        /* --- 導覽列 --- */
-        header { background-color: var(--primary-color); color: var(--white); padding: 1.2rem 0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        header { background-color: var(--primary-color); color: var(--white); padding: 1.2rem 0; position: sticky; top: 0; z-index: 1000; }
         .nav-content { display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 1.5rem; font-weight: 700; }
-        nav ul { list-style: none; display: flex; gap: 20px; }
-        nav ul li a { color: var(--white); text-decoration: none; font-weight: 500; transition: 0.3s; padding: 5px 10px; border-radius: 4px; }
-        nav ul li a:hover, nav ul li a.active { color: var(--secondary-color); background: rgba(255,255,255,0.1); }
-
-        /* --- 頁面內容樣式 --- */
-        .hero {
-            height: 500px;
-            background: linear-gradient(rgba(0, 51, 102, 0.7), rgba(0, 51, 102, 0.7)), 
-                        url('https://images.unsplash.com/photo-1523050853064-8521a303001e?q=80&w=2000&auto=format&fit=crop');
-            background-size: cover; background-position: center;
-            display: flex; align-items: center; justify-content: center; text-align: center; color: var(--white);
-        }
-        .hero-content h1 { font-size: 3rem; margin-bottom: 1rem; }
-        .btn { display: inline-block; padding: 12px 35px; background-color: var(--secondary-color); color: var(--primary-color); text-decoration: none; font-weight: bold; border-radius: 50px; transition: 0.3s; }
-        .btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255,215,0,0.3); }
-
-        .main-section { padding: 80px 0; text-align: center; }
+        nav ul { list-style: none; display: flex; gap: 15px; }
+        nav ul li a { color: var(--white); text-decoration: none; font-weight: 500; padding: 5px 10px; transition: 0.3s; }
+        nav ul li a:hover, nav ul li a.active { color: var(--secondary-color); }
+        .hero { height: 450px; background: linear-gradient(rgba(0,51,102,0.7), rgba(0,51,102,0.7)), url('https://images.unsplash.com/photo-1523050853064-8521a303001e?q=80&w=2000&auto=format&fit=crop'); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--white); }
+        .main-section { padding: 60px 0; text-align: center; }
         .section-title { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 30px; }
-        .section-title::after { content: ""; display: block; width: 50px; height: 4px; background: var(--secondary-color); margin: 10px auto; }
-
-        .photo-grid-preview { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-top: 40px; }
-        .photo-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.3s; }
-        .photo-card:hover { transform: translateY(-5px); }
+        .photo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .photo-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .photo-card img { width: 100%; height: 220px; object-fit: cover; }
-        .photo-info { padding: 15px; font-weight: bold; color: var(--primary-color); }
-
-        /* --- 頁尾 --- */
-        footer { background-color: #222; color: #999; padding: 40px 0; text-align: center; font-size: 0.9rem; border-top: 4px solid var(--secondary-color); }
-        footer a { color: #ccc; text-decoration: none; margin-left: 10px; }
+        footer { background-color: #222; color: #999; padding: 40px 0; text-align: center; border-top: 4px solid var(--secondary-color); }
     </style>
 </head>
 <body>
@@ -61,34 +33,27 @@
                     <li><a href="index.html" class="active">首頁</a></li>
                     <li><a href="gallery.html">照片回顧</a></li>
                     <li><a href="blessings.html">祝福留言</a></li>
+                    <li><a href="memorial.html">紀念明信片</a></li>
                     <li><a href="games.html">互動小遊戲</a></li>
                 </ul>
             </nav>
         </div>
     </header>
-
     <section class="hero">
         <div class="hero-content">
             <h1>鵬程萬里，珍重再見</h1>
             <p>在那年夏天，我們一起寫下的回憶。</p><br>
-            <a href="gallery.html" class="btn">瀏覽典禮照片</a>
+            <a href="memorial.html" style="background:var(--secondary-color); color:var(--primary-color); padding:10px 25px; border-radius:30px; text-decoration:none; font-weight:bold;">製作我的紀念明信片</a>
         </div>
     </section>
-
     <section class="container main-section">
         <h2 class="section-title">典禮精選時刻</h2>
-        <div class="photo-grid-preview">
-            <div class="photo-card"><img src="https://picsum.photos/id/1015/600/400"><div class="photo-info">正式啟程</div></div>
-            <div class="photo-card"><img src="https://picsum.photos/id/1018/600/400"><div class="photo-info">撥穗榮耀</div></div>
-            <div class="photo-card"><img src="https://picsum.photos/id/1019/600/400"><div class="photo-info">摯友同框</div></div>
+        <div class="photo-grid">
+            <div class="photo-card"><img src="https://picsum.photos/id/1015/600/400"><div style="padding:15px;">啟程</div></div>
+            <div class="photo-card"><img src="https://picsum.photos/id/1018/600/400"><div style="padding:15px;">榮耀</div></div>
+            <div class="photo-card"><img src="https://picsum.photos/id/1019/600/400"><div style="padding:15px;">回憶</div></div>
         </div>
     </section>
-
-    <footer>
-        <div class="container">
-            <p>© 2026 資工系學會 畢業典禮籌備組製作</p>
-            <p style="margin-top: 10px;">網頁維護：你的名字 | <a href="https://github.com/你的帳號" target="_blank">GitHub</a></p>
-        </div>
-    </footer>
+    <footer><p>© 2026 資工系學會 畢業典禮籌備組製作</p></footer>
 </body>
 </html>
