@@ -3,92 +3,235 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2026級畢業紀念站 | 首頁</title>
+    <title>Pop-Dance 排行榜 | 2026級畢業紀念站</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* --- 全站共用變數與樣式 --- */
-        :root {
-            --primary-color: #003366;
-            --secondary-color: #FFD700;
-            --white: #ffffff;
-            --bg-color: #f4f7f9;
-        }
+        :root { --primary-color: #003366; --secondary-color: #FFD700; --white: #ffffff; --bg-color: #f4f7f9; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg-color); color: #333; }
-        .container { width: 90%; max-width: 1200px; margin: 0 auto; }
-
-        /* --- 導覽列 --- */
-        header { background-color: var(--primary-color); color: var(--white); padding: 1.2rem 0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .nav-content { display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 1.5rem; font-weight: 700; }
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg-color); text-align: center; }
+        
+        header { background-color: var(--primary-color); color: var(--white); padding: 1.2rem 0; position: sticky; top: 0; z-index: 1000; }
+        .nav-content { display: flex; justify-content: space-between; align-items: center; width: 90%; max-width: 1200px; margin: 0 auto; }
         nav ul { list-style: none; display: flex; gap: 20px; }
-        nav ul li a { color: var(--white); text-decoration: none; font-weight: 500; transition: 0.3s; padding: 5px 10px; border-radius: 4px; }
-        nav ul li a:hover, nav ul li a.active { color: var(--secondary-color); background: rgba(255,255,255,0.1); }
+        nav ul li a { color: var(--white); text-decoration: none; font-weight: 500; }
 
-        /* --- 頁面內容樣式 --- */
-        .hero {
-            height: 500px;
-            background: linear-gradient(rgba(0, 51, 102, 0.7), rgba(0, 51, 102, 0.7)), 
-                        url('https://images.unsplash.com/photo-1523050853064-8521a303001e?q=80&w=2000&auto=format&fit=crop');
-            background-size: cover; background-position: center;
-            display: flex; align-items: center; justify-content: center; text-align: center; color: var(--white);
+        .game-section { padding: 40px 0; }
+        .score { font-size: 5rem; font-weight: bold; color: var(--primary-color); margin: 0; text-shadow: 2px 2px 0px white; }
+        
+        #pop-container {
+            width: 280px;
+            height: 420px;
+            margin: 0 auto;
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
-        .hero-content h1 { font-size: 3rem; margin-bottom: 1rem; }
-        .btn { display: inline-block; padding: 12px 35px; background-color: var(--secondary-color); color: var(--primary-color); text-decoration: none; font-weight: bold; border-radius: 50px; transition: 0.3s; }
-        .btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255,215,0,0.3); }
+        #pop-img { max-width: 100%; max-height: 100%; object-fit: contain; -webkit-user-drag: none; }
 
-        .main-section { padding: 80px 0; text-align: center; }
-        .section-title { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 30px; }
-        .section-title::after { content: ""; display: block; width: 50px; height: 4px; background: var(--secondary-color); margin: 10px auto; }
+        /* 排行榜樣式 */
+        .leaderboard {
+            max-width: 500px;
+            margin: 40px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .leaderboard h3 { color: var(--primary-color); margin-bottom: 15px; border-bottom: 2px solid var(--secondary-color); padding-bottom: 5px; }
+        .leaderboard-list { list-style: none; text-align: left; }
+        .leaderboard-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; }
+        .leaderboard-item:last-child { border-bottom: none; }
+        .rank { font-weight: bold; color: var(--secondary-color); margin-right: 10px; }
 
-        .photo-grid-preview { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-top: 40px; }
-        .photo-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.3s; }
-        .photo-card:hover { transform: translateY(-5px); }
-        .photo-card img { width: 100%; height: 220px; object-fit: cover; }
-        .photo-info { padding: 15px; font-weight: bold; color: var(--primary-color); }
+        /* 彈窗樣式 */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 2000;
+        }
+        .modal-content { background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 400px; }
+        .modal-content input { width: 100%; padding: 12px; margin: 20px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
+        .btn { border: none; cursor: pointer; padding: 12px 30px; background: var(--primary-color); color: white; border-radius: 8px; font-weight: bold; width: 100%; }
 
-        /* --- 頁尾 --- */
-        footer { background-color: #222; color: #999; padding: 40px 0; text-align: center; font-size: 0.9rem; border-top: 4px solid var(--secondary-color); }
-        footer a { color: #ccc; text-decoration: none; margin-left: 10px; }
+        footer { background-color: #222; color: #999; padding: 40px 0; border-top: 4px solid var(--secondary-color); }
     </style>
 </head>
 <body>
+
+    <!-- 暱稱輸入彈窗 -->
+    <div id="name-modal" class="modal">
+        <div class="modal-content">
+            <h3>輸入你的舞王暱稱</h3>
+            <input type="text" id="nickname-input" placeholder="例如：資工三 小明" maxlength="15">
+            <button class="btn" onclick="startApp()">進入遊戲</button>
+        </div>
+    </div>
+
     <header>
         <div class="container nav-content">
             <div class="logo">🎓 2026級畢業紀念站</div>
             <nav>
                 <ul>
-                    <li><a href="index.html" class="active">首頁</a></li>
+                    <li><a href="index.html">首頁</a></li>
                     <li><a href="gallery.html">照片回顧</a></li>
                     <li><a href="blessings.html">祝福留言</a></li>
-                    <li><a href="games.html">互動小遊戲</a></li>
+                    <li><a href="games.html" style="color:var(--secondary-color)">互動小遊戲</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
-    <section class="hero">
-        <div class="hero-content">
-            <h1>鵬程萬里，珍重再見</h1>
-            <p>在那年夏天，我們一起寫下的回憶。</p><br>
-            <a href="gallery.html" class="btn">瀏覽典禮照片</a>
+    <section class="container game-section">
+        <h2 style="color:var(--primary-color)">畢業舞王 Pop-Dance</h2>
+        <div class="score" id="score">0</div>
+        
+        <div id="pop-container">
+            <img id="pop-img" src="friend1.jpg" alt="Loading...">
+        </div>
+
+        <p style="margin-top:15px; color:#666;">點擊學長姐，衝向排行榜第一！</p>
+
+        <!-- 排行榜區塊 -->
+        <div class="leaderboard">
+            <h3>🏆 點擊排行榜</h3>
+            <ul id="leaderboard-list" class="leaderboard-list">
+                <li style="text-align:center; padding:20px;">載入排行榜中...</li>
+            </ul>
         </div>
     </section>
 
-    <section class="container main-section">
-        <h2 class="section-title">典禮精選時刻</h2>
-        <div class="photo-grid-preview">
-            <div class="photo-card"><img src="https://picsum.photos/id/1015/600/400"><div class="photo-info">正式啟程</div></div>
-            <div class="photo-card"><img src="https://picsum.photos/id/1018/600/400"><div class="photo-info">撥穗榮耀</div></div>
-            <div class="photo-card"><img src="https://picsum.photos/id/1019/600/400"><div class="photo-info">摯友同框</div></div>
-        </div>
-    </section>
+    <audio id="pop-sound" src="https://www.soundjay.com/buttons/sounds/button-37.mp3"></audio>
 
-    <footer>
-        <div class="container">
-            <p>© 2026 資工系學會 畢業典禮籌備組製作</p>
-            <p style="margin-top: 10px;">網頁維護：你的名字 | <a href="https://github.com/你的帳號" target="_blank">GitHub</a></p>
-        </div>
-    </footer>
+    <footer><p>© 2026 資工系學會 畢業典禮籌備組製作</p></footer>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // 1. 初始化 Firebase
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'pop-dance-app';
+
+        let user = null;
+        let nickname = "";
+        let localScore = 0;
+        let isSyncing = false;
+
+        const popImg = document.getElementById('pop-img');
+        const scoreDisplay = document.getElementById('score');
+        const popSound = document.getElementById('pop-sound');
+        const listContainer = document.getElementById('leaderboard-list');
+
+        // 2. 身份驗證 (Rule 3)
+        const initAuth = async () => {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+                await signInAnonymously(auth);
+            }
+        };
+
+        onAuthStateChanged(auth, (u) => {
+            if (u) {
+                user = u;
+                loadUserScore();
+                startLeaderboardListener();
+            }
+        });
+
+        // 啟動 App
+        window.startApp = () => {
+            const input = document.getElementById('nickname-input').value.trim();
+            if (!input) return;
+            nickname = input;
+            document.getElementById('name-modal').style.display = 'none';
+            initAuth();
+        };
+
+        // 3. 讀取使用者原本的點擊數
+        const loadUserScore = async () => {
+            if (!user) return;
+            const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', user.uid);
+            const snap = await getDoc(userRef);
+            if (snap.exists()) {
+                localScore = snap.data().score || 0;
+                scoreDisplay.innerText = localScore;
+            }
+        };
+
+        // 4. 排行榜即時監聽 (Rule 1 & 2)
+        const startLeaderboardListener = () => {
+            const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard');
+            onSnapshot(colRef, (snapshot) => {
+                const data = [];
+                snapshot.forEach(doc => data.push({ id: doc.id, ...doc.data() }));
+                
+                // 在記憶體中排序 (Rule 2)
+                data.sort((a, b) => (b.score || 0) - (a.score || 0));
+                
+                renderLeaderboard(data.slice(0, 10));
+            }, (err) => console.error("Snapshot error:", err));
+        };
+
+        const renderLeaderboard = (topUsers) => {
+            listContainer.innerHTML = topUsers.map((u, index) => `
+                <li class="leaderboard-item">
+                    <span><span class="rank">#${index + 1}</span> ${u.nickname || '匿名舞者'}</span>
+                    <span>${u.score || 0} 次</span>
+                </li>
+            `).join('');
+        };
+
+        // 5. 更新點擊數至雲端 (加上 Debounce 防止過度寫入)
+        let saveTimer = null;
+        const syncScore = () => {
+            if (!user || isSyncing) return;
+            if (saveTimer) clearTimeout(saveTimer);
+            
+            saveTimer = setTimeout(async () => {
+                isSyncing = true;
+                const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', user.uid);
+                await setDoc(userRef, {
+                    nickname: nickname,
+                    score: localScore,
+                    lastUpdated: Date.now()
+                }, { merge: true });
+                isSyncing = false;
+            }, 2000); // 停止點擊 2 秒後上傳
+        };
+
+        // 遊戲核心邏輯
+        const img_normal = "friend1.jpg";
+        const img_active = "friend2.jpg";
+        const preload = new Image(); preload.src = img_active;
+
+        function pop() {
+            localScore++;
+            scoreDisplay.innerText = localScore;
+            popImg.src = img_active;
+            popSound.currentTime = 0;
+            popSound.play().catch(() => {});
+            syncScore();
+        }
+
+        function unpop() { popImg.src = img_normal; }
+
+        const container = document.getElementById('pop-container');
+        container.addEventListener('mousedown', (e) => { if(e.button === 0) pop(); });
+        window.addEventListener('mouseup', unpop);
+        container.addEventListener('touchstart', (e) => { e.preventDefault(); pop(); });
+        container.addEventListener('touchend', (e) => { e.preventDefault(); unpop(); });
+    </script>
 </body>
 </html>
