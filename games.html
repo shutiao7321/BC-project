@@ -66,6 +66,7 @@
 </head>
 <body>
 
+    <!-- 暱稱輸入視窗 -->
     <div id="name-modal" class="modal">
         <div class="modal-content">
             <h3>🏆 舞王挑戰開始</h3>
@@ -108,6 +109,7 @@
         </div>
     </section>
 
+    <!-- 使用 CDN 提供的按鈕音效 -->
     <audio id="pop-sound" src="https://www.soundjay.com/buttons/sounds/button-37.mp3"></audio>
 
     <footer><p>© 2026 資工系學會 畢業典禮籌備組製作</p></footer>
@@ -115,9 +117,9 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, query, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- 全域變數 ---
+        // --- 全域變數定義 ---
         let auth = null, db = null, user = null, nickname = "", localScore = 0;
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'pop-dance-v1';
         
@@ -130,18 +132,18 @@
         const img_normal = "friend1.jpg";
         const img_active = "friend2.jpg";
 
-        // 預載圖片
+        // 預載第二張圖防止閃爍
         const preload = new Image();
         preload.src = img_active;
 
-        // --- Firebase 初始化 ---
+        // --- Firebase 初始化流程 ---
         try {
             const firebaseConfig = JSON.parse(__firebase_config);
             const app = initializeApp(firebaseConfig);
             auth = getAuth(app);
             db = getFirestore(app);
             
-            // 監聽登入狀態
+            // 監聽登入狀態 (Rule 3)
             onAuthStateChanged(auth, (u) => {
                 if (u) {
                     user = u;
@@ -150,22 +152,22 @@
                 }
             });
         } catch (e) { 
-            console.error("Firebase Init Error:", e);
-            listContainer.innerHTML = `<li style="text-align:center; padding:10px; color:orange;">本機預覽模式：無法連線資料庫</li>`;
+            console.error("Firebase 初始化失敗:", e);
+            listContainer.innerHTML = `<li style="text-align:center; padding:10px; color:orange;">環境載入中或無法連線</li>`;
         }
 
-        // --- 核心遊戲函數 ---
+        // --- 核心遊戲互動邏輯 ---
         function pop() {
             localScore++;
             scoreDisplay.innerText = localScore;
             popImg.src = img_active;
             
-            // 聲音處理
+            // 播放點擊音效
             popSound.currentTime = 0;
             popSound.play().catch(() => {});
             
-            // 只有在成功連線時才嘗試同步
-            if (user && nickname) {
+            // 如果已登入且有暱稱，觸發雲端同步
+            if (user && nickname && db) {
                 syncScore();
             }
         }
@@ -174,7 +176,7 @@
             popImg.src = img_normal;
         }
 
-        // --- 啟動與登入 ---
+        // --- 啟動與雲端同步功能 ---
         window.startApp = async () => {
             const input = document.getElementById('nickname-input');
             const errorMsg = document.getElementById('error-msg');
@@ -187,52 +189,64 @@
             nickname = input.value.trim();
             document.getElementById('name-modal').style.display = 'none';
             
-            if (!auth) return; // 如果 Firebase 沒開，至少讓彈窗消失可以玩本機版
+            if (!auth) return;
 
+            // 執行登入流程 (Rule 3)
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
                 } else {
                     await signInAnonymously(auth);
                 }
-            } catch (err) { console.error("Login Error:", err); }
+            } catch (err) { 
+                console.error("登入錯誤:", err); 
+            }
         };
 
         const loadUserScore = async () => {
             if (!user || !db) return;
             try {
+                // 從專用路徑讀取 (Rule 1)
                 const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', user.uid);
                 const snap = await getDoc(userRef);
                 if (snap.exists()) {
                     localScore = snap.data().score || 0;
                     scoreDisplay.innerText = localScore;
                 }
-            } catch (e) { console.error("Load Score Error:", e); }
+            } catch (e) { console.error("分數讀取失敗:", e); }
         };
 
         const startLeaderboardListener = () => {
             if (!db) return;
+            // 監聽排行榜集合 (Rule 1)
             const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard');
             onSnapshot(colRef, (snapshot) => {
                 const data = [];
-                snapshot.forEach(doc => data.push(doc.data()));
-                data.sort((a, b) => (b.score || 0) - (a.score || 0));
+                snapshot.forEach(doc => {
+                    const item = doc.data();
+                    if (item.nickname && item.score !== undefined) {
+                        data.push(item);
+                    }
+                });
+                
+                // 在本機記憶體中排序 (Rule 2)
+                data.sort((a, b) => b.score - a.score);
                 renderLeaderboard(data.slice(0, 10));
             }, (err) => {
-                console.error("Snapshot error:", err);
-                listContainer.innerHTML = `<li style="text-align:center; padding:10px; color:red;">讀取排行失敗</li>`;
+                console.error("即時更新失敗:", err);
+                listContainer.innerHTML = `<li style="text-align:center; padding:10px; color:red;">無法更新排行榜</li>`;
             });
         };
 
         const renderLeaderboard = (topUsers) => {
             if (topUsers.length === 0) {
-                listContainer.innerHTML = `<li style="text-align:center; padding:20px;">還沒有紀錄，快當第一個！</li>`;
+                listContainer.innerHTML = `<li style="text-align:center; padding:20px;">尚無紀錄，快來搶首位！</li>`;
                 return;
             }
             listContainer.innerHTML = topUsers.map((u, index) => `
                 <li class="leaderboard-item">
-                    <span><span class="rank">#${index + 1}</span> ${u.nickname || '匿名舞者'}</span>
-                    <span>${u.score || 0} 次</span>
+                    <span><span class="rank">#${index + 1}</span> ${u.nickname}</span>
+                    <span>${u.score} 次</span>
                 </li>
             `).join('');
         };
@@ -240,6 +254,7 @@
         let saveTimer = null;
         const syncScore = () => {
             if (!user || !nickname || !db) return;
+            // 使用 Debounce 機制減少寫入次數，優化效能
             if (saveTimer) clearTimeout(saveTimer);
             saveTimer = setTimeout(async () => {
                 try {
@@ -249,17 +264,18 @@
                         score: localScore,
                         lastUpdated: Date.now()
                     }, { merge: true });
-                } catch (e) { console.error("Sync Error:", e); }
+                } catch (e) { console.error("雲端儲存失敗:", e); }
             }, 1500); 
         };
 
-        // --- 事件綁定 ---
+        // --- 事件綁定 (滑鼠與觸控) ---
         container.addEventListener('mousedown', (e) => {
             if (e.button === 0) pop();
         });
         
         window.addEventListener('mouseup', unpop);
 
+        // 適配手機版連點
         container.addEventListener('touchstart', (e) => {
             if (e.cancelable) e.preventDefault();
             pop();
