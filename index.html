@@ -10,8 +10,7 @@
             --primary-color: #003366;
             --secondary-color: #FFD700;
             --white: #ffffff;
-            --bg-color: #f0f2f5;
-            --card-height: 180px;
+            --bg-color: #000000; /* 背景改為深色 */
         }
 
         * {
@@ -23,7 +22,7 @@
         body {
             font-family: 'Noto Sans TC', sans-serif;
             background-color: var(--bg-color);
-            color: #333;
+            color: var(--white);
             overflow-x: hidden;
         }
 
@@ -32,10 +31,11 @@
             background-color: var(--primary-color);
             color: var(--white);
             padding: 1.2rem 0;
-            position: sticky;
+            position: fixed; /* 固定在頂部 */
+            width: 100%;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
 
         .nav-content {
@@ -61,136 +61,138 @@
 
         nav ul li a:hover, nav ul li a.active { color: var(--secondary-color); }
 
-        /* --- 主視覺圖 (bg1.jpg) --- */
+        /* --- 主視覺圖 (bg1.jpg) - 80vh --- */
         .main-visual {
             width: 100%;
             height: 80vh;
-            min-height: 400px;
-            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('bg1.jpg');
+            background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('bg1.jpg');
             background-size: cover;
             background-position: center;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
             text-align: center;
+            margin-top: 0;
         }
 
         .hero-text h1 {
-            font-size: 3.5rem;
-            letter-spacing: 5px;
-            text-shadow: 3px 3px 10px rgba(0,0,0,0.5);
-            margin-bottom: 10px;
+            font-size: 4rem;
+            letter-spacing: 8px;
+            text-shadow: 3px 3px 15px rgba(0,0,0,0.7);
+            margin-bottom: 15px;
         }
 
-        /* --- 階梯式方框佈局 --- */
-        .staircase-container {
-            width: 90%;
-            max-width: 1000px;
-            margin: -50px auto 80px; /* 向上偏移與主視覺銜接 */
+        .hero-text p {
+            font-size: 1.5rem;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.7);
+        }
+
+        /* --- 滿版連結區塊佈局 --- */
+        .sections-container {
+            width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 20px;
         }
 
-        .stair-link {
+        .full-width-link {
             text-decoration: none;
-            color: inherit;
+            color: var(--white);
             display: block;
             width: 100%;
-            max-width: 800px;
-            height: var(--card-height);
+            height: 30vh;
             position: relative;
-            background: white;
-            border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-
-        /* 階梯偏移效果 (Desktop) */
-        .stair-1 { align-self: flex-start; }
-        .stair-2 { align-self: flex-start; margin-left: 10%; }
-        .stair-3 { align-self: flex-start; margin-left: 20%; }
-        .stair-4 { align-self: flex-start; margin-left: 30%; }
-
-        /* 滑動動作效果 */
-        .stair-link::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.2), transparent);
-            transition: 0.5s;
-        }
-
-        .stair-link:hover {
-            transform: translateX(20px) scale(1.02);
-            box-shadow: 0 15px 35px rgba(0,51,102,0.2);
-            z-index: 10;
-        }
-
-        .stair-link:hover::before {
-            left: 100%;
-        }
-
-        /* 方框內容佈局 */
-        .stair-content {
-            display: flex;
-            height: 100%;
-            align-items: center;
-        }
-
-        .stair-icon {
-            width: 120px;
-            height: 100%;
-            background-color: var(--primary-color);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
-            color: var(--secondary-color);
+            transition: 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* 每個區塊的背景設定 */
+        .full-width-link .bg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            z-index: 1;
+            transition: transform 0.8s ease, filter 0.5s ease;
+            filter: brightness(0.6); /* 預設較暗 */
+        }
+
+        .stair-1 .bg-overlay { background-image: url('bg2.jpg'); }
+        .stair-2 .bg-overlay { background-image: url('bg3.jpg'); }
+        .stair-3 .bg-overlay { background-image: url('bg4.jpg'); }
+        .stair-4 .bg-overlay { background-image: url('friend1.jpg'); }
+
+        /* 內容與文字 */
+        .link-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .link-content h3 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            letter-spacing: 4px;
             transition: 0.3s;
         }
 
-        .stair-link:hover .stair-icon {
+        .link-content p {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* 懸停效果：背景放大、變亮 */
+        .full-width-link:hover .bg-overlay {
+            transform: scale(1.05);
+            filter: brightness(0.85);
+        }
+
+        .full-width-link:hover .link-content h3 {
+            color: var(--secondary-color);
+            transform: scale(1.1);
+        }
+
+        /* 底部裝飾線 */
+        .full-width-link::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 4px;
             background-color: var(--secondary-color);
-            color: var(--primary-color);
+            transition: 0.5s;
+            z-index: 3;
         }
 
-        .stair-text {
-            padding: 30px;
-            flex-grow: 1;
-        }
-
-        .stair-text h3 {
-            font-size: 1.8rem;
-            color: var(--primary-color);
-            margin-bottom: 8px;
-        }
-
-        .stair-text p {
-            color: #666;
-            font-size: 1.1rem;
+        .full-width-link:hover::after {
+            width: 100%;
+            left: 0;
         }
 
         /* --- 頁尾 --- */
         footer {
-            background-color: #222;
-            color: #999;
-            padding: 40px 0;
+            background-color: #111;
+            color: #777;
+            padding: 50px 0;
             text-align: center;
-            border-top: 4px solid var(--secondary-color);
         }
 
-        /* 手機版適配：取消階梯偏移 */
-        @media (max-width: 900px) {
-            .stair-2, .stair-3, .stair-4 { margin-left: 0; }
-            .stair-link { align-self: center; }
+        /* 手機版適配 */
+        @media (max-width: 768px) {
             .hero-text h1 { font-size: 2.5rem; }
-            .stair-icon { width: 80px; font-size: 2rem; }
+            .hero-text p { font-size: 1.1rem; }
+            .link-content h3 { font-size: 1.8rem; }
+            .link-content p { font-size: 0.9rem; }
+            .full-width-link { height: 25vh; }
         }
     </style>
 </head>
@@ -211,7 +213,7 @@
         </div>
     </header>
 
-    <!-- 主視覺圖區區 -->
+    <!-- 主視覺圖區 (bg1.jpg) -->
     <section class="main-visual">
         <div class="hero-text">
             <h1>2026 珍重再見</h1>
@@ -219,46 +221,38 @@
         </div>
     </section>
 
-    <!-- 階梯式連結區 -->
-    <main class="staircase-container">
+    <!-- 滿版橫幅連結區 -->
+    <main class="sections-container">
         
-        <a href="gallery.html" class="stair-link stair-1">
-            <div class="stair-content">
-                <div class="stair-icon">🖼️</div>
-                <div class="stair-text">
-                    <h3>照片回顧</h3>
-                    <p>重溫典禮現場的感動瞬間與校園點滴</p>
-                </div>
+        <a href="gallery.html" class="full-width-link stair-1">
+            <div class="bg-overlay"></div>
+            <div class="link-content">
+                <h3>照片回顧</h3>
+                <p>重溫典禮現場的感動瞬間與校園點滴</p>
             </div>
         </a>
 
-        <a href="blessings.html" class="stair-link stair-2">
-            <div class="stair-content">
-                <div class="stair-icon">✉️</div>
-                <div class="stair-text">
-                    <h3>祝福留言</h3>
-                    <p>留下你想對學長姐說的悄悄話</p>
-                </div>
+        <a href="blessings.html" class="full-width-link stair-2">
+            <div class="bg-overlay"></div>
+            <div class="link-content">
+                <h3>祝福留言</h3>
+                <p>留下你想對學長姐說的悄悄話</p>
             </div>
         </a>
 
-        <a href="memorial.html" class="stair-link stair-3">
-            <div class="stair-content">
-                <div class="stair-icon">🎴</div>
-                <div class="stair-text">
-                    <h3>紀念明信片</h3>
-                    <p>客製化專屬的畢業感言明信片並下載留存</p>
-                </div>
+        <a href="memorial.html" class="full-width-link stair-3">
+            <div class="bg-overlay"></div>
+            <div class="link-content">
+                <h3>紀念明信片</h3>
+                <p>客製化專屬的畢業感言明信片並下載留存</p>
             </div>
         </a>
 
-        <a href="games.html" class="stair-link stair-4">
-            <div class="stair-content">
-                <div class="stair-icon">🕹️</div>
-                <div class="stair-text">
-                    <h3>互動小遊戲</h3>
-                    <p>挑戰畢業舞王 Pop-Dance 排行榜</p>
-                </div>
+        <a href="games.html" class="full-width-link stair-4">
+            <div class="bg-overlay"></div>
+            <div class="link-content">
+                <h3>互動小遊戲</h3>
+                <p>挑戰畢業舞王 Pop-Dance 排行榜</p>
             </div>
         </a>
 
