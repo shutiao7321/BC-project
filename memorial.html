@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>趣味互動 | 時光紀錄展</title>
+    <title>時光印記 | 時光紀錄展</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&family=Noto+Serif+TC:wght@600;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -13,7 +13,6 @@
             --text-light: #7f8c8d;
             --border-color: #f0f0f0;
             --accent-bg: #fafafa;
-            --gold: #f1c40f;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -80,129 +79,102 @@
             font-weight: 900;
         }
 
-        /* --- 遊戲主展區 --- */
-        .game-hub {
+        /* --- 編輯器佈局 --- */
+        .editor-container {
             width: 90%;
-            max-width: 1200px;
+            max-width: 1300px;
             margin: 0 auto 100px;
             display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
+            grid-template-columns: 400px 1fr;
             gap: 50px;
+            align-items: start;
         }
 
-        /* 遊戲區域 */
-        .exhibit-frame {
+        .controls {
             background: var(--accent-bg);
-            border: 1px solid var(--border-color);
-            padding: 40px;
-            text-align: center;
-            position: relative;
-        }
-        .exhibit-info {
-            text-align: left;
-            margin-bottom: 30px;
-            border-left: 3px solid var(--primary-color);
-            padding-left: 20px;
-        }
-        .exhibit-info h3 { font-family: 'Noto Serif TC', serif; font-size: 1.8rem; margin-bottom: 5px; }
-        .exhibit-info p { color: var(--text-light); font-size: 0.9rem; }
-
-        .score-display {
-            font-family: 'Noto Serif TC', serif;
-            font-size: 4rem;
-            font-weight: 900;
-            color: var(--primary-color);
-            margin: 20px 0;
-        }
-
-        #pop-container {
-            width: 280px;
-            height: 400px;
-            margin: 0 auto;
-            cursor: pointer;
-            background: white;
-            border: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            transition: 0.1s;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-        #pop-container:active { transform: scale(0.98); border-color: var(--primary-color); }
-        #pop-img { max-width: 100%; max-height: 100%; object-fit: contain; pointer-events: none; }
-
-        /* 排行榜區域 */
-        .leaderboard-section {
-            background: white;
-            border: 1px solid var(--border-color);
             padding: 30px;
+            border: 1px solid var(--border-color);
         }
-        .leaderboard-section h3 {
+        .control-group { margin-bottom: 25px; }
+        .control-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            background: white;
+            font-family: inherit;
+            outline: none;
+            transition: 0.3s;
+        }
+        input:focus, textarea:focus { border-color: var(--primary-color); }
+
+        .image-picker {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .img-option {
+            aspect-ratio: 1;
+            background: #eee;
+            cursor: pointer;
+            border: 2px solid transparent;
+            background-size: cover;
+            background-position: center;
+        }
+        .img-option.active { border-color: var(--primary-color); }
+
+        /* 預覽區域 */
+        .preview-area {
+            text-align: center;
+            position: sticky;
+            top: 120px;
+        }
+        #postcard-canvas {
+            max-width: 100%;
+            height: auto;
+            background: white;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+            border: 1px solid var(--border-color);
+        }
+        .download-btn {
+            margin-top: 30px;
+            width: 100%;
+            padding: 20px;
+            background: var(--text-main);
+            color: white;
+            border: none;
+            cursor: pointer;
             font-family: 'Noto Serif TC', serif;
-            font-size: 1.4rem;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            transition: 0.3s;
         }
-        .leaderboard-list { list-style: none; }
-        .leaderboard-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px dotted var(--border-color);
-            font-size: 0.95rem;
-        }
-        .rank { font-weight: bold; color: var(--primary-color); margin-right: 10px; font-family: 'Noto Serif TC', serif; }
+        .download-btn:hover { background: var(--primary-color); transform: translateY(-3px); }
 
-        /* 暱稱視窗 */
-        .modal {
-            position: fixed; inset: 0; background: rgba(255,255,255,0.95);
-            display: flex; align-items: center; justify-content: center; z-index: 2000;
-        }
-        .modal-content {
-            width: 90%; max-width: 400px; text-align: center;
-        }
-        .modal-content h3 { font-family: 'Noto Serif TC', serif; font-size: 2rem; margin-bottom: 20px; }
-        .modal-content input {
-            width: 100%; padding: 15px; border: 1px solid var(--border-color);
-            border-radius: 0; margin-bottom: 20px; font-family: inherit; font-size: 1rem; text-align: center;
-        }
-        .start-btn {
-            width: 100%; padding: 15px; background: var(--text-main); color: white;
-            border: none; cursor: pointer; font-weight: 700; letter-spacing: 2px;
-        }
-
-        /* 頁尾 */
         footer {
-            padding: 80px 0;
+            padding: 100px 0;
             background-color: var(--accent-bg);
             text-align: center;
             color: var(--text-light);
             font-size: 0.8rem;
-            letter-spacing: 2px;
         }
 
-        @media (max-width: 900px) {
-            .game-hub { grid-template-columns: 1fr; }
-            .page-header h2 { font-size: 2.5rem; }
+        @media (max-width: 1000px) {
+            .editor-container { grid-template-columns: 1fr; }
+            .preview-area { position: static; }
         }
     </style>
 </head>
 <body>
-
-    <!-- 暱稱輸入 -->
-    <div id="name-modal" class="modal">
-        <div class="modal-content">
-            <span>Entry 04</span>
-            <h3>登錄趣味互動展</h3>
-            <p style="color:var(--text-light); margin-bottom:20px;">請輸入您的暱稱以同步數據</p>
-            <input type="text" id="nickname-input" placeholder="您的稱呼" maxlength="15">
-            <button class="start-btn" onclick="startApp()">開始互動</button>
-            <p id="error-msg" style="color: red; font-size: 0.8rem; margin-top: 10px; display: none;">請輸入暱稱後再開始</p>
-        </div>
-    </div>
 
     <header>
         <div class="nav-content">
@@ -212,8 +184,8 @@
                     <li><a href="index.html">首頁</a></li>
                     <li><a href="gallery.html">影像紀事</a></li>
                     <li><a href="blessings.html">夏日留言</a></li>
-                    <li><a href="memorial.html">時光印記</a></li>
-                    <li><a href="games.html" class="active">趣味互動</a></li>
+                    <li><a href="memorial.html" class="active">時光印記</a></li>
+                    <li><a href="games.html">趣味互動</a></li>
                 </ul>
             </nav>
         </div>
@@ -221,145 +193,150 @@
 
     <main>
         <div class="page-header">
-            <span>Part 04</span>
-            <h2>趣味互動</h2>
+            <span>Part 03</span>
+            <h2>時光印記</h2>
         </div>
 
-        <section class="game-hub">
-            <div class="exhibit-frame">
-                <div class="exhibit-info">
-                    <h3>展位 A：Pop-Dance</h3>
-                    <p>透過點擊與畫中的人物互動，在輕快的節奏中釋放壓力。</p>
+        <section class="editor-container">
+            <!-- 左側控制項 -->
+            <div class="controls">
+                <div class="control-group">
+                    <label>選擇背景底圖</label>
+                    <div class="image-picker" id="image-picker">
+                        <div class="img-option active" style="background-color: #f9f9f9;" onclick="setBg(null, this)"></div>
+                        <!-- 這些圖片路徑指向你的 public 資料夾 -->
+                        <div class="img-option" style="background-image: url('public/campus.jpg');" onclick="setBg('public/campus.jpg', this)"></div>
+                        <div class="img-option" style="background-image: url('public/ceremony.jpg');" onclick="setBg('public/ceremony.jpg', this)"></div>
+                        <div class="img-option" style="background-image: url('public/friend1.jpg');" onclick="setBg('public/friend1.jpg', this)"></div>
+                    </div>
                 </div>
-                
-                <div class="score-display" id="score">0</div>
-                
-                <div id="pop-container">
-                    <!-- 修正路徑：移除了 public/，改為直接讀取根目錄 -->
-                    <img id="pop-img" src="friend1.jpg" onerror="this.src='https://api.dicebear.com/7.x/fun-emoji/svg?seed=1'" alt="Pop!">
+
+                <div class="control-group">
+                    <label>致學長姐</label>
+                    <input type="text" id="inp-to" placeholder="例：親愛的 某某學長" value="親愛的學長姐" oninput="draw()">
                 </div>
-                
-                <p style="margin-top:20px; color:var(--text-light); font-size:0.85rem; letter-spacing:1px;">
-                    TIP: 瘋狂點擊學長姐，同步至雲端排行榜
-                </p>
+
+                <div class="control-group">
+                    <label>心意文字</label>
+                    <textarea id="inp-msg" rows="5" oninput="draw()">鵬程萬里，前程似錦。
+感謝這段時光有你們的引領，
+願我們在未來的頂峰相見。</textarea>
+                </div>
+
+                <div class="control-group">
+                    <label>署名</label>
+                    <input type="text" id="inp-from" placeholder="例：資工系學弟妹 敬上" value="學弟妹全體 敬上" oninput="draw()">
+                </div>
             </div>
 
-            <div class="leaderboard-section">
-                <h3>🏆 舞王排行榜</h3>
-                <ul id="leaderboard-list" class="leaderboard-list">
-                    <li style="text-align:center; padding:20px; color:var(--text-light);">正在連線雲端...</li>
-                </ul>
+            <!-- 右側預覽 -->
+            <div class="preview-area">
+                <canvas id="postcard-canvas" width="1000" height="700"></canvas>
+                <button class="download-btn" onclick="download()">💾 保存這段記憶 (.png)</button>
+                <p style="margin-top: 15px; font-size: 0.85rem; color: var(--text-light);">
+                    建議使用電腦瀏覽器進行下載以獲得最佳解析度
+                </p>
             </div>
         </section>
     </main>
-
-    <audio id="pop-sound" src="https://www.soundjay.com/buttons/sounds/button-37.mp3"></audio>
 
     <footer>
         <p>Created for the memories that last forever | 2026 JOURNAL</p>
     </footer>
 
-    <!-- Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    <script>
+        const canvas = document.getElementById('postcard-canvas');
+        const ctx = canvas.getContext('2d');
+        let bgImg = null;
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDocqxQaMDGOUhdAJsV71bse4QC-tjtB-Y",
-            authDomain: "bc-project-db.firebaseapp.com",
-            projectId: "bc-project-db",
-            storageBucket: "bc-project-db.firebasestorage.app",
-            messagingSenderId: "999527367804",
-            appId: "1:999527367804:web:3ba10b2818ab9fe6aa75f9",
-            measurementId: "G-X14MEDWSLR"
-        };
+        function setBg(url, el) {
+            document.querySelectorAll('.img-option').forEach(opt => opt.classList.remove('active'));
+            el.classList.add('active');
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = 'bc-project-db';
-
-        let user = null, nickname = "", localScore = 0;
-        const popImg = document.getElementById('pop-img');
-        const scoreDisplay = document.getElementById('score');
-        const listContainer = document.getElementById('leaderboard-list');
-
-        // 設定圖片路徑（根目錄）
-        const img_normal = "friend1.jpg";
-        const img_active = "friend2.jpg";
-
-        window.startApp = async () => {
-            const input = document.getElementById('nickname-input').value.trim();
-            if (!input) {
-                document.getElementById('error-msg').style.display = 'block';
-                return;
-            }
-            nickname = input;
-            document.getElementById('name-modal').style.display = 'none';
-            try { await signInAnonymously(auth); } catch (err) { console.error(err); }
-        };
-
-        onAuthStateChanged(auth, (u) => {
-            if (u) {
-                user = u;
-                loadScore();
-                listenLeaderboard();
-            }
-        });
-
-        const loadScore = async () => {
-            if (!user) return;
-            const ref = doc(db, 'artifacts', appId, 'public', 'data', 'popdance', user.uid);
-            const snap = await getDoc(ref);
-            if (snap.exists()) {
-                localScore = snap.data().score || 0;
-                scoreDisplay.innerText = localScore;
-            }
-        };
-
-        const listenLeaderboard = () => {
-            const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'popdance');
-            onSnapshot(colRef, (snap) => {
-                const data = [];
-                snap.forEach(d => data.push(d.data()));
-                data.sort((a, b) => (b.score || 0) - (a.score || 0));
-                renderLeaderboard(data.slice(0, 10));
-            });
-        };
-
-        const renderLeaderboard = (top) => {
-            listContainer.innerHTML = top.map((u, i) => `
-                <li class="leaderboard-item">
-                    <span><span class="rank">#${i+1}</span> ${u.nickname || '匿名'}</span>
-                    <span>${u.score || 0}</span>
-                </li>
-            `).join('') || '<li style="text-align:center;padding:20px;">尚無紀錄</li>';
-        };
-
-        let syncTimer = null;
-        function pop() {
-            localScore++;
-            scoreDisplay.innerText = localScore;
-            popImg.src = img_active; // 修正路徑
-            document.getElementById('pop-sound').currentTime = 0;
-            document.getElementById('pop-sound').play().catch(()=>{});
-
-            if (user && nickname) {
-                clearTimeout(syncTimer);
-                syncTimer = setTimeout(async () => {
-                    const ref = doc(db, 'artifacts', appId, 'public', 'data', 'popdance', user.uid);
-                    await setDoc(ref, { nickname, score: localScore, updatedAt: Date.now() }, { merge: true });
-                }, 1500);
+            if (!url) {
+                bgImg = null;
+                draw();
+            } else {
+                const img = new Image();
+                img.crossOrigin = "anonymous";
+                img.src = url;
+                img.onload = () => {
+                    bgImg = img;
+                    draw();
+                };
             }
         }
 
-        const container = document.getElementById('pop-container');
-        container.addEventListener('mousedown', (e) => { if(e.button === 0) pop(); });
-        window.addEventListener('mouseup', () => popImg.src = img_normal); // 修正路徑
-        container.addEventListener('touchstart', (e) => { e.preventDefault(); pop(); });
-        container.addEventListener('touchend', (e) => { e.preventDefault(); popImg.src = img_normal; });
+        function draw() {
+            const to = document.getElementById('inp-to').value;
+            const msg = document.getElementById('inp-msg').value;
+            const from = document.getElementById('inp-from').value;
 
+            // 1. 清除畫布
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 2. 繪製背景
+            if (bgImg) {
+                // 繪製圖片並加上半透明遮罩
+                ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+
+            // 3. 繪製邊框與裝飾
+            ctx.strokeStyle = "#2c3e50";
+            ctx.lineWidth = 1;
+            ctx.strokeRect(40, 40, canvas.width - 80, canvas.height - 80);
+
+            // 繪製「郵票」裝飾
+            ctx.setLineDash([5, 5]);
+            ctx.strokeRect(canvas.width - 180, 80, 100, 130);
+            ctx.setLineDash([]);
+            ctx.font = 'bold 16px "Noto Sans TC"';
+            ctx.fillStyle = "#2c3e50";
+            ctx.fillText("2026", canvas.width - 150, 150);
+
+            // 4. 文字內容
+            ctx.fillStyle = "#2c3e50";
+            
+            // To:
+            ctx.font = '900 32px "Noto Serif TC"';
+            ctx.fillText(to, 80, 120);
+
+            // Message:
+            ctx.font = '300 28px "Noto Sans TC"';
+            const lines = msg.split('\n');
+            lines.forEach((line, i) => {
+                ctx.fillText(line, 80, 220 + (i * 45));
+            });
+
+            // From:
+            ctx.font = '700 30px "Noto Serif TC"';
+            ctx.textAlign = 'right';
+            ctx.fillText(from, canvas.width - 100, canvas.height - 120);
+            ctx.textAlign = 'left';
+
+            // 5. 展覽浮水印裝飾
+            ctx.font = '900 14px "Noto Sans TC"';
+            ctx.fillStyle = "rgba(52, 152, 219, 0.5)";
+            ctx.fillText("THE EXHIBITION OF MEMORIES : JOURNAL 2026", 80, canvas.width < 768 ? canvas.height - 60 : canvas.height - 60);
+        }
+
+        function download() {
+            const link = document.createElement('a');
+            link.download = `時光印記-2026.png`;
+            link.href = canvas.toDataURL('image/png', 1.0);
+            link.click();
+        }
+
+        // 初始繪製
+        window.onload = () => {
+            // 載入字體後再繪製以確保位置正確
+            document.fonts.ready.then(() => {
+                draw();
+            });
+        };
     </script>
 </body>
 </html>
