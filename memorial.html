@@ -264,12 +264,7 @@
                     picker.appendChild(div);
                 });
                 
-                // 額外加入根目錄的 friend1.jpg 作為特別選項
-                const friendOption = document.createElement('div');
-                friendOption.className = 'img-option';
-                friendOption.style.backgroundImage = "url('friend1.jpg')";
-                friendOption.onclick = () => setBg('friend1.jpg', friendOption);
-                picker.appendChild(friendOption);
+              
 
             } catch (err) {
                 console.error("無法載入底圖清單:", err);
