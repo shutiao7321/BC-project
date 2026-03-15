@@ -154,7 +154,6 @@
             border-bottom: 1px dotted var(--border-color);
             font-size: 0.95rem;
         }
-        .leaderboard-item:last-child { border-bottom: none; }
         .rank { font-weight: bold; color: var(--primary-color); margin-right: 10px; font-family: 'Noto Serif TC', serif; }
 
         /* 暱稱視窗 */
@@ -175,26 +174,7 @@
             border: none; cursor: pointer; font-weight: 700; letter-spacing: 2px;
         }
 
-        /* 即將推出佔位符 */
-        .coming-soon {
-            margin-top: 50px;
-            grid-column: 1 / -1;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 30px;
-        }
-        .soon-card {
-            height: 150px;
-            background: var(--accent-bg);
-            border: 1px dashed var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-light);
-            font-size: 0.9rem;
-            letter-spacing: 2px;
-        }
-
+        /* 頁尾 */
         footer {
             padding: 80px 0;
             background-color: var(--accent-bg);
@@ -246,7 +226,6 @@
         </div>
 
         <section class="game-hub">
-            <!-- 遊戲主體 -->
             <div class="exhibit-frame">
                 <div class="exhibit-info">
                     <h3>展位 A：Pop-Dance</h3>
@@ -256,7 +235,8 @@
                 <div class="score-display" id="score">0</div>
                 
                 <div id="pop-container">
-                    <img id="pop-img" src="public/friend1.jpg" onerror="this.src='https://api.dicebear.com/7.x/fun-emoji/svg?seed=1'" alt="Pop!">
+                    <!-- 修正路徑：移除了 public/，改為直接讀取根目錄 -->
+                    <img id="pop-img" src="friend1.jpg" onerror="this.src='https://api.dicebear.com/7.x/fun-emoji/svg?seed=1'" alt="Pop!">
                 </div>
                 
                 <p style="margin-top:20px; color:var(--text-light); font-size:0.85rem; letter-spacing:1px;">
@@ -264,18 +244,11 @@
                 </p>
             </div>
 
-            <!-- 排行榜 -->
             <div class="leaderboard-section">
                 <h3>🏆 舞王排行榜</h3>
                 <ul id="leaderboard-list" class="leaderboard-list">
                     <li style="text-align:center; padding:20px; color:var(--text-light);">正在連線雲端...</li>
                 </ul>
-            </div>
-
-            <!-- 未來擴充區 -->
-            <div class="coming-soon">
-                <div class="soon-card">EXHIBIT B / 即將推出</div>
-                <div class="soon-card">EXHIBIT C / 即將推出</div>
             </div>
         </section>
     </main>
@@ -292,7 +265,6 @@
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- Firebase Config ---
         const firebaseConfig = {
             apiKey: "AIzaSyDocqxQaMDGOUhdAJsV71bse4QC-tjtB-Y",
             authDomain: "bc-project-db.firebaseapp.com",
@@ -313,7 +285,10 @@
         const scoreDisplay = document.getElementById('score');
         const listContainer = document.getElementById('leaderboard-list');
 
-        // 啟動 App
+        // 設定圖片路徑（根目錄）
+        const img_normal = "friend1.jpg";
+        const img_active = "friend2.jpg";
+
         window.startApp = async () => {
             const input = document.getElementById('nickname-input').value.trim();
             if (!input) {
@@ -322,10 +297,7 @@
             }
             nickname = input;
             document.getElementById('name-modal').style.display = 'none';
-            
-            try {
-                await signInAnonymously(auth);
-            } catch (err) { console.error("Login Error:", err); }
+            try { await signInAnonymously(auth); } catch (err) { console.error(err); }
         };
 
         onAuthStateChanged(auth, (u) => {
@@ -369,7 +341,7 @@
         function pop() {
             localScore++;
             scoreDisplay.innerText = localScore;
-            popImg.src = "public/friend2.jpg";
+            popImg.src = img_active; // 修正路徑
             document.getElementById('pop-sound').currentTime = 0;
             document.getElementById('pop-sound').play().catch(()=>{});
 
@@ -384,9 +356,9 @@
 
         const container = document.getElementById('pop-container');
         container.addEventListener('mousedown', (e) => { if(e.button === 0) pop(); });
-        window.addEventListener('mouseup', () => popImg.src = "public/friend1.jpg");
+        window.addEventListener('mouseup', () => popImg.src = img_normal); // 修正路徑
         container.addEventListener('touchstart', (e) => { e.preventDefault(); pop(); });
-        container.addEventListener('touchend', (e) => { e.preventDefault(); popImg.src = "public/friend1.jpg"; });
+        container.addEventListener('touchend', (e) => { e.preventDefault(); popImg.src = img_normal; });
 
     </script>
 </body>
