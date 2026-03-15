@@ -3,72 +3,395 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>祝福留言 | 2026級畢業紀念站</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <title>夏日留言 | 時光紀錄展</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&family=Noto+Serif+TC:wght@600;900&display=swap" rel="stylesheet">
     <style>
-        :root { --primary-color: #003366; --secondary-color: #FFD700; --white: #ffffff; --bg-color: #f4f7f9; }
+        :root {
+            --primary-color: #3498db;
+            --bg-color: #ffffff;
+            --text-main: #2c3e50;
+            --text-light: #7f8c8d;
+            --border-color: #f0f0f0;
+            --accent-bg: #fafafa;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg-color); }
-        .container { width: 90%; max-width: 800px; margin: 0 auto; }
-        
-        header { background-color: var(--primary-color); color: var(--white); padding: 1.2rem 0; position: sticky; top: 0; z-index: 1000; }
-        .nav-content { display: flex; justify-content: space-between; align-items: center; width: 90%; max-width: 1200px; margin: 0 auto; }
-        nav ul { list-style: none; display: flex; gap: 20px; }
-        nav ul li a { color: var(--white); text-decoration: none; font-weight: 500; transition: 0.3s; padding: 5px 10px; border-radius: 4px; }
-        nav ul li a:hover, nav ul li a.active { color: var(--secondary-color); background: rgba(255,255,255,0.1); }
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
 
-        .section { padding: 60px 0; text-align: center; }
-        .section-title { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 40px; }
-        
-        .form-box { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 40px; text-align: left; }
-        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; }
-        .btn { border: none; cursor: pointer; display: block; width: 100%; text-align: center; padding: 12px; background-color: var(--secondary-color); color: var(--primary-color); font-weight: bold; border-radius: 8px; font-size: 1.1rem; }
+        /* --- 導覽列 --- */
+        header {
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            padding: 1.5rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 90%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .logo { font-family: 'Noto Serif TC', serif; font-size: 1.4rem; letter-spacing: 3px; font-weight: 900; }
+        nav ul { list-style: none; display: flex; gap: 30px; }
+        nav ul li a { color: var(--text-main); text-decoration: none; font-size: 0.9rem; transition: 0.3s; }
+        nav ul li a:hover, nav ul li a.active { color: var(--primary-color); }
 
-        .blessing-list { text-align: left; }
-        .blessing-card { background: #fffbe6; padding: 20px; border-radius: 10px; border-left: 5px solid var(--secondary-color); margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .blessing-card p { font-size: 1.1rem; margin-bottom: 10px; }
-        .blessing-card small { color: #888; }
+        /* --- 展覽標題區 --- */
+        .page-header {
+            margin-top: 180px;
+            text-align: center;
+            padding-bottom: 60px;
+            position: relative;
+        }
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1px;
+            height: 60px;
+            background: var(--primary-color);
+        }
+        .page-header span {
+            font-size: 0.8rem;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            display: block;
+            margin-bottom: 15px;
+        }
+        .page-header h2 {
+            font-family: 'Noto Serif TC', serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+        }
 
-        footer { background-color: #222; color: #999; padding: 40px 0; text-align: center; border-top: 4px solid var(--secondary-color); }
+        /* --- 留言輸入區 --- */
+        .input-section {
+            width: 90%;
+            max-width: 800px;
+            margin: 0 auto 80px;
+            background: var(--accent-bg);
+            padding: 40px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+        .input-section h3 {
+            font-family: 'Noto Serif TC', serif;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            outline: none;
+            transition: 0.3s;
+        }
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--primary-color);
+        }
+        textarea { resize: vertical; grid-column: 1 / -1; }
+        .submit-btn {
+            grid-column: 1 / -1;
+            padding: 15px;
+            background: var(--text-main);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 700;
+            letter-spacing: 2px;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+        .submit-btn:hover {
+            background: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* --- 留言牆 --- */
+        .message-wall {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto 100px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .message-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            position: relative;
+            transition: 0.4s;
+            display: flex;
+            flex-direction: column;
+        }
+        .message-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        }
+        .message-card .tag {
+            font-size: 0.7rem;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            display: block;
+        }
+        .message-card .content {
+            font-size: 1.05rem;
+            color: var(--text-main);
+            margin-bottom: 25px;
+            flex-grow: 1;
+            white-space: pre-wrap;
+        }
+        .message-card .footer {
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .loader {
+            text-align: center;
+            grid-column: 1 / -1;
+            padding: 50px;
+            color: var(--text-light);
+            letter-spacing: 2px;
+        }
+
+        footer {
+            padding: 100px 0;
+            background-color: var(--accent-bg);
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 768px) {
+            .page-header h2 { font-size: 2.5rem; }
+            .form-row { grid-template-columns: 1fr; }
+            .message-wall { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
+
     <header>
-        <div class="container nav-content">
-            <div class="logo">🎓 2026級畢業紀念站</div>
+        <div class="nav-content">
+            <div class="logo">JOURNAL 2026</div>
             <nav>
                 <ul>
                     <li><a href="index.html">首頁</a></li>
-                    <li><a href="gallery.html">照片回顧</a></li>
-                    <li><a href="blessings.html" class="active">祝福留言</a></li>
-                    <li><a href="games.html">互動小遊戲</a></li>
+                    <li><a href="gallery.html">影像紀事</a></li>
+                    <li><a href="blessings.html" class="active">夏日留言</a></li>
+                    <li><a href="memorial.html">時光印記</a></li>
+                    <li><a href="games.html">趣味互動</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
-    <section class="container section">
-        <h2 class="section-title">給學長姐的祝福</h2>
-        
-        <div class="form-box">
-            <h3 style="margin-bottom:15px; color:var(--primary-color)">寫下你的留言</h3>
-            <input type="text" placeholder="你的稱呼 (如：資工二 某某某)">
-            <textarea rows="4" placeholder="在這裡寫下你的祝福語..."></textarea>
-            <button class="btn" onclick="alert('謝謝你的祝福！(目前為靜態展示，未來可連接資料庫)')">送出祝福</button>
+    <main>
+        <div class="page-header">
+            <span>Part 02</span>
+            <h2>夏日留言</h2>
         </div>
 
-        <div class="blessing-list">
-            <div class="blessing-card">
-                <p>「謝謝學長在我們大一進來時的指導，祝你在以後的工作崗位上大顯身手！」</p>
-                <small>— 學弟 王小明 敬上</small>
+        <section class="container">
+            <!-- 留言表單 -->
+            <div class="input-section">
+                <h3>留下此刻的印記</h3>
+                <div class="form-row">
+                    <input type="text" id="user-name" placeholder="你的稱呼" maxlength="15">
+                    <select id="user-identity">
+                        <option value="畢業生">畢業生 (Graduate)</option>
+                        <option value="在校生">在校生 (Student)</option>
+                        <option value="親友">親友 (Visitor)</option>
+                    </select>
+                </div>
+                <textarea id="user-message" rows="4" placeholder="在此寫下你想說的話..." maxlength="200"></textarea>
+                <button class="submit-btn" id="submit-btn">送出留言</button>
+                <p id="status-msg" style="text-align:center; font-size:0.8rem; margin-top:10px; color:var(--primary-color); display:none;"></p>
             </div>
-            <div class="blessing-card">
-                <p>「恭喜畢業！看到你們努力了四年終於開花結果，真的很替你們高興！」</p>
-                <small>— 學妹 陳美美 敬上</small>
-            </div>
-        </div>
-    </section>
 
-    <footer><p>© 2026 資工系學會 畢業典禮籌備組製作</p></footer>
+            <!-- 留言牆區塊 -->
+            <div class="message-wall" id="message-wall">
+                <div class="loader">正在讀取夏日的回音...</div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Created for the memories that last forever | 2026 JOURNAL</p>
+    </footer>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- Firebase Config (請確保這串與你在 games.html 裡的一致) ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDocqxQaMDGOUhdAJsV71bse4QC-tjtB-Y",
+            authDomain: "bc-project-db.firebaseapp.com",
+            projectId: "bc-project-db",
+            storageBucket: "bc-project-db.firebasestorage.app",
+            messagingSenderId: "999527367804",
+            appId: "1:999527367804:web:3ba10b2818ab9fe6aa75f9",
+            measurementId: "G-X14MEDWSLR"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = 'bc-project-db'; // 與你專案一致
+
+        let currentUser = null;
+
+        // 初始化：登入與讀取
+        async function init() {
+            try {
+                const cred = await signInAnonymously(auth);
+                currentUser = cred.user;
+                listenToMessages();
+            } catch (err) {
+                console.error("Auth Error:", err);
+                document.getElementById('message-wall').innerHTML = '<div class="loader">連線失敗，請檢查 Firebase 設定。</div>';
+            }
+        }
+
+        // 即時監聽留言牆 (Rule 1 & 2)
+        function listenToMessages() {
+            const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'messages');
+            // 注意：不使用 orderBy 以避免索引問題，在前端手動排序
+            onSnapshot(colRef, (snapshot) => {
+                const messages = [];
+                snapshot.forEach(doc => {
+                    messages.push({ id: doc.id, ...doc.data() });
+                });
+                
+                // 按時間排序 (最新在前面)
+                messages.sort((a, b) => {
+                    const timeA = a.createdAt?.seconds || 0;
+                    const timeB = b.createdAt?.seconds || 0;
+                    return timeB - timeA;
+                });
+
+                renderMessages(messages);
+            }, (err) => {
+                console.error("Snapshot error:", err);
+            });
+        }
+
+        // 渲染留言卡片
+        function renderMessages(data) {
+            const wall = document.getElementById('message-wall');
+            if (data.length === 0) {
+                wall.innerHTML = '<div class="loader">目前還沒有留言，來當第一個吧！</div>';
+                return;
+            }
+
+            wall.innerHTML = data.map(msg => `
+                <div class="message-card">
+                    <span class="tag">${msg.identity || '訪客'}</span>
+                    <div class="content">${escapeHtml(msg.text)}</div>
+                    <div class="footer">
+                        <strong>${escapeHtml(msg.name || '匿名')}</strong>
+                        <span>${formatDate(msg.createdAt)}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 送出留言
+        document.getElementById('submit-btn').onclick = async () => {
+            const name = document.getElementById('user-name').value.trim();
+            const identity = document.getElementById('user-identity').value;
+            const text = document.getElementById('user-message').value.trim();
+            const btn = document.getElementById('submit-btn');
+            const status = document.getElementById('status-msg');
+
+            if (!text) {
+                alert("請輸入留言內容喔！");
+                return;
+            }
+
+            btn.disabled = true;
+            status.innerText = "正在傳送你的心意...";
+            status.style.display = "block";
+
+            try {
+                const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'messages');
+                await addDoc(colRef, {
+                    name: name || "匿名",
+                    identity: identity,
+                    text: text,
+                    createdAt: serverTimestamp()
+                });
+
+                // 清空輸入
+                document.getElementById('user-message').value = '';
+                status.innerText = "留言成功！";
+                setTimeout(() => status.style.display = "none", 3000);
+            } catch (err) {
+                console.error("Submit error:", err);
+                alert("送出失敗，請確認資料庫權限已開啟。");
+            } finally {
+                btn.disabled = false;
+            }
+        };
+
+        // 輔助函式：格式化時間
+        function formatDate(timestamp) {
+            if (!timestamp) return '剛剛';
+            const date = new Date(timestamp.seconds * 1000);
+            return `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
+        }
+
+        // 輔助函式：防止 XSS 攻擊
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        init();
+    </script>
 </body>
 </html>
