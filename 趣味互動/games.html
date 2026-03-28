@@ -209,10 +209,10 @@
             <div class="logo">JOURNAL 2026</div>
             <nav>
                 <ul>
-                    <li><a href="index.html">首頁</a></li>
-                    <li><a href="gallery.html">影像紀事</a></li>
-                    <li><a href="blessings.html">夏日留言</a></li>
-                    <li><a href="memorial.html">時光印記</a></li>
+                    <li><a href="../首頁/index.html">首頁</a></li>
+                    <li><a href="../影像紀事/gallery.html">影像紀事</a></li>
+                    <li><a href="../夏日留言/blessings.html">夏日留言</a></li>
+                    <li><a href="../時光印記/memorial.html">時光印記</a></li>
                     <li><a href="games.html" class="active">趣味互動</a></li>
                 </ul>
             </nav>
@@ -236,7 +236,7 @@
                 
                 <div id="pop-container">
                     <!-- 修正路徑：移除了 public/，改為直接讀取根目錄 -->
-                    <img id="pop-img" src="friend1.jpg" onerror="this.src='https://api.dicebear.com/7.x/fun-emoji/svg?seed=1'" alt="Pop!">
+                    <img id="pop-img" src="images/friend1.jpg" onerror="this.src='https://api.dicebear.com/7.x/fun-emoji/svg?seed=1'" alt="Pop!">
                 </div>
                 
                 <p style="margin-top:20px; color:var(--text-light); font-size:0.85rem; letter-spacing:1px;">
@@ -286,8 +286,8 @@
         const listContainer = document.getElementById('leaderboard-list');
 
         // 設定圖片路徑（根目錄）
-        const img_normal = "friend1.jpg";
-        const img_active = "friend2.jpg";
+        const img_normal = "images/friend1.jpg";
+        const img_active = "images/friend2.jpg";
 
         window.startApp = async () => {
             const input = document.getElementById('nickname-input').value.trim();
